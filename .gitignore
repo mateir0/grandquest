@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Next.js
+.next/
+*.tsbuildinfo
+
+# Sanity Studio build output + runtime
+dist/
+.sanity/
+
+# Vercel
+.vercel/
+
+# Environment files (may carry tokens — never commit; see *.example)
+.env
+.env.local
+.env.*.local
