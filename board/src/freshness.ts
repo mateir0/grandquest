@@ -2,13 +2,14 @@
  * Freshness mirror of shared/freshness.ts (Prompt 10) — duplicated here so the
  * board app stays self-contained (Vite root is board/).
  *
- * Rule: stale when lastVerified is missing/invalid, older than 30 days, or the
- * deadline is at or before the 60-day cutoff (which covers passed deadlines).
+ * The badge answers "can I trust this data", not "is the deadline near" —
+ * deadline urgency is the countdown chronometer's job. Stale when lastVerified
+ * is missing/invalid or older than 30 days (data decay), or the deadline has
+ * already passed (strictly before now). A missing/unset deadline is not passed.
  */
 export type Freshness = 'stale' | 'fresh'
 
 export const STALE_AFTER_DAYS = 30
-export const NEAR_DEADLINE_DAYS = 60
 
 const DAY_MS = 86_400_000
 
@@ -19,18 +20,18 @@ interface FreshnessDocument {
 
 export function getFreshnessCutoffs(now: Date = new Date()): {
   staleCutoff: string
-  soonCutoff: string
+  nowCutoff: string
 } {
   const nowMs = now.getTime()
   return {
     staleCutoff: new Date(nowMs - STALE_AFTER_DAYS * DAY_MS).toISOString(),
-    soonCutoff: new Date(nowMs + NEAR_DEADLINE_DAYS * DAY_MS).toISOString(),
+    nowCutoff: new Date(nowMs).toISOString(),
   }
 }
 
 export function getFreshness(
   doc: FreshnessDocument | null | undefined,
-  cutoffs: {staleCutoff: string; soonCutoff: string},
+  cutoffs: {staleCutoff: string; nowCutoff: string},
 ): Freshness {
   if (!doc?.lastVerified) return 'stale'
 
@@ -40,7 +41,7 @@ export function getFreshness(
 
   if (doc.deadline) {
     const deadline = Date.parse(doc.deadline)
-    if (!Number.isNaN(deadline) && deadline <= Date.parse(cutoffs.soonCutoff)) return 'stale'
+    if (!Number.isNaN(deadline) && deadline < Date.parse(cutoffs.nowCutoff)) return 'stale'
   }
 
   return 'fresh'

@@ -39,7 +39,7 @@ interface SweepRow {
 
 /** Mirrors studio/verificationQueue.ts: manual flags + derived stale rows. */
 const QUEUE_QUERY = `*[
-  _type == "quest" && (status == "needsReverification" || (!defined(lastVerified) || dateTime(lastVerified) == null || dateTime(lastVerified) < dateTime($staleCutoff) || (defined(deadline) && dateTime(deadline) != null && dateTime(deadline) <= dateTime($soonCutoff))))
+  _type == "quest" && (status == "needsReverification" || (!defined(lastVerified) || dateTime(lastVerified) == null || dateTime(lastVerified) < dateTime($staleCutoff) || (defined(deadline) && dateTime(deadline) != null && dateTime(deadline) < dateTime($nowCutoff))))
 ] {_id, title, deadline, status, lastVerified}
   | order(dateTime(deadline) asc, _id asc)`
 

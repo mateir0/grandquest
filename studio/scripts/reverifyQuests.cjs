@@ -13,9 +13,10 @@
  * than a string edit. The legacy `quest.status` is left untouched. Idempotent
  * and resumable — safe to re-run.
  *
- * Derived freshness (shared/freshness.ts) is deadline-dominated: a re-verified
- * quest whose deadline has passed or is within 60 days stays NEEDS
- * RE-VERIFICATION by design; the script reports that split at the end.
+ * Derived freshness (shared/freshness.ts) measures verification recency: a
+ * re-verified quest whose deadline has already passed stays NEEDS
+ * RE-VERIFICATION by design (next cycle's details unconfirmed); near-but-future
+ * deadlines read FRESH. The script reports that split at the end.
  *
  * Token: VITE_SANITY_WRITE_TOKEN from board/.env (read + write on this
  * dataset), falling back to SANITY_AUTH_TOKEN. Never logged.
@@ -34,7 +35,6 @@ const DATASET = 'production'
 const TAG = 'production'
 const DEFINITION = 'quest-verification'
 const STALE_AFTER_DAYS = 30
-const NEAR_DEADLINE_DAYS = 60
 const DAY_MS = 86_400_000
 
 const APPLY = process.argv.includes('--apply')
@@ -157,7 +157,7 @@ async function main() {
 
   // Derived-freshness report (mirrors shared/freshness.ts).
   const staleCutoff = new Date(Date.now() - STALE_AFTER_DAYS * DAY_MS).toISOString()
-  const soonCutoff = new Date(Date.now() + NEAR_DEADLINE_DAYS * DAY_MS).toISOString()
+  const nowCutoff = new Date().toISOString()
   const after = await client.fetch(
     `*[_type == "quest" && !(_id in path("drafts.**")) && status == "published"]{_id, title, deadline, lastVerified} | order(deadline asc)`,
   )
@@ -169,12 +169,12 @@ async function main() {
     const isStale =
       Number.isNaN(lv) ||
       lv < Date.parse(staleCutoff) ||
-      (q.deadline && Date.parse(q.deadline) <= Date.parse(soonCutoff))
+      (q.deadline && Date.parse(q.deadline) < Date.parse(nowCutoff))
     ;(isStale ? stale : fresh).push(q)
   }
   console.log(`\nFRESH: ${fresh.length}`)
   for (const q of fresh) console.log(`  + ${q.title} | deadline=${q.deadline || '-'}`)
-  console.log(`NEEDS RE-VERIFICATION (near/passed deadline, expected): ${stale.length}`)
+  console.log(`NEEDS RE-VERIFICATION (passed deadline, expected): ${stale.length}`)
   for (const q of stale) console.log(`  - ${q.title} | deadline=${q.deadline || '-'}`)
 }
 

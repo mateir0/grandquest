@@ -11,14 +11,15 @@ const DATASET = 'production'
 const TAG = 'production'
 const DEFINITION = 'quest-verification'
 
-// Mirrors shared/freshness.ts (Prompt 10): stale when lastVerified is older than
-// 30 days, or the deadline is at or before the 60-day cutoff — which also covers
-// deadlines that have already passed.
+// Mirrors shared/freshness.ts: stale when lastVerified is missing/invalid or
+// older than 30 days (data decay), or the deadline has already passed (strictly
+// before now). A missing/unset deadline is not passed. Deadline urgency for
+// near-but-future deadlines is the web countdown's job, not the badge's — so the
+// sweeper no longer reopens instances the web badge still calls FRESH.
 const STALE_AFTER_DAYS = 30
-const NEAR_DEADLINE_DAYS = 60
 const DAY_MS = 86_400_000
 
-const STALE_FILTER = `(!defined(lastVerified) || dateTime(lastVerified) == null || dateTime(lastVerified) < dateTime($staleCutoff) || (defined(deadline) && dateTime(deadline) != null && dateTime(deadline) <= dateTime($soonCutoff)))`
+const STALE_FILTER = `(!defined(lastVerified) || dateTime(lastVerified) == null || dateTime(lastVerified) < dateTime($staleCutoff) || (defined(deadline) && dateTime(deadline) != null && dateTime(deadline) < dateTime($nowCutoff)))`
 
 interface QuestRow {
   _id: string
@@ -39,18 +40,14 @@ function subjectDocId(instance: InstanceRow): string | undefined {
   return gdr ? gdr.split(':').pop() : undefined
 }
 
-function reasonFor(quest: QuestRow, staleCutoff: string, soonCutoff: string): string {
+function reasonFor(quest: QuestRow, staleCutoff: string, nowCutoff: string): string {
   const reasons: string[] = []
   if (!quest.lastVerified) reasons.push('never verified')
   else if (Date.parse(quest.lastVerified) < Date.parse(staleCutoff)) {
     reasons.push(`lastVerified older than ${STALE_AFTER_DAYS} days`)
   }
-  if (quest.deadline && Date.parse(quest.deadline) <= Date.parse(soonCutoff)) {
-    reasons.push(
-      Date.parse(quest.deadline) < Date.now()
-        ? 'deadline passed'
-        : `deadline within ${NEAR_DEADLINE_DAYS} days`,
-    )
+  if (quest.deadline && Date.parse(quest.deadline) < Date.parse(nowCutoff)) {
+    reasons.push('deadline passed')
   }
   return reasons.join('; ') || 'stale'
 }
@@ -78,11 +75,11 @@ export const handler = scheduledEventHandler(async ({context}) => {
 
   const now = Date.now()
   const staleCutoff = new Date(now - STALE_AFTER_DAYS * DAY_MS).toISOString()
-  const soonCutoff = new Date(now + NEAR_DEADLINE_DAYS * DAY_MS).toISOString()
+  const nowCutoff = new Date(now).toISOString()
 
   const staleQuests = await client.fetch<QuestRow[]>(
     `*[_type == "quest" && !(_id in path("drafts.**")) && ${STALE_FILTER}]{_id, title, lastVerified, deadline}`,
-    {staleCutoff, soonCutoff},
+    {staleCutoff, nowCutoff},
   )
 
   const instances = await engine.query<InstanceRow[]>({
@@ -116,7 +113,7 @@ export const handler = scheduledEventHandler(async ({context}) => {
       _type: 'sweepLog',
       quest: {_type: 'reference', _ref: quest._id},
       ranAt: new Date().toISOString(),
-      reason: reasonFor(quest, staleCutoff, soonCutoff),
+      reason: reasonFor(quest, staleCutoff, nowCutoff),
     })
     reopened += 1
   }
