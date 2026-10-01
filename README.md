@@ -6,7 +6,7 @@ Every scholarship is a **quest**. Each quest has **eligibility gates** (clear th
 
 Designed steampunk Vitoriano — parchment, brass, mahogany.
 
-Live: https://grantquest-ruddy.vercel.app
+Live: https://grantquest.tech
 Studio: https://grantquest.sanity.studio
 
 Built for the DEV Sanity Challenge (Path Two).
