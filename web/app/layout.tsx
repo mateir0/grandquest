@@ -19,14 +19,39 @@ const jetBrainsMono = JetBrains_Mono({
   variable: '--font-jet-brains',
 })
 
+const siteUrl = 'https://grantquest.tech'
+const siteDescription =
+  'Scholarships are quests. Clear the gates, gather the documents, beat the deadline.'
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: 'GrantQuest — the scholarship hunt as a quest board',
-  description:
-    'Scholarships are quests. Clear the gates, gather the documents, beat the deadline.',
+  description: siteDescription,
+  openGraph: {
+    type: 'website',
+    url: siteUrl,
+    siteName: 'GrantQuest',
+    title: 'GrantQuest — the scholarship hunt as a quest board',
+    description: siteDescription,
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'GrantQuest — brass compass-gear emblem on a deep maroon field',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'GrantQuest — the scholarship hunt as a quest board',
+    description: siteDescription,
+    images: ['/og-image.png'],
+  },
 }
 
 export const viewport: Viewport = {
-  themeColor: '#F5DEB3',
+  themeColor: '#5c0000',
 }
 
 export default function RootLayout({children}: {children: React.ReactNode}) {
