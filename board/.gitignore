@@ -1,0 +1,10 @@
+# Environment files (the write token lives ONLY here — never commit)
+.env
+.env.local
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+*.tsbuildinfo

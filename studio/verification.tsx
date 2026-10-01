@@ -6,51 +6,40 @@ import {
   type DocumentBadgeComponent,
   type DocumentBadgeDescription,
 } from 'sanity'
-import type {StructureBuilder} from 'sanity/structure'
 import {CheckmarkIcon, WarningOutlineIcon} from '@sanity/icons'
+import {
+  getFreshness,
+  getFreshnessCutoffs,
+} from '../shared/freshness'
+export {verificationQueueItem} from './verificationQueue'
 
 /**
  * Freshness-verification workflow for quest documents.
  *
  * Red badge rule ("NEEDS RE-VERIFICATION"): lastVerified is older than 30 days
- * (or was never set), OR the deadline is within 60 days while status is published.
+ * (or missing/invalid), OR the deadline is within 60 days.
  * Everything else shows a green "FRESH" badge.
  *
  * Plain Structure Builder + badges + actions only — no new plugins.
  */
 
-/** A quest is stale once its verification is older than this. */
-export const STALE_AFTER_DAYS = 30
-/** A published quest with a deadline nearer than this needs re-verification. */
-export const NEAR_DEADLINE_DAYS = 60
-
-const DAY_MS = 86_400_000
-
 interface QuestLike {
   status?: string
-  deadline?: string
-  lastVerified?: string
+  deadline?: string | null
+  lastVerified?: string | null
 }
 
-/** True when the quest carries the red badge. Shared by badge, queue and actions. */
+/** True when the quest carries the red badge. */
 export function needsReverification(doc?: QuestLike | null): boolean {
   if (!doc) return false
-  if (!doc.lastVerified) return true
-  const verifiedAt = new Date(doc.lastVerified).getTime()
-  if (!Number.isNaN(verifiedAt) && Date.now() - verifiedAt > STALE_AFTER_DAYS * DAY_MS) return true
-  if (doc.status === 'published' && doc.deadline) {
-    const deadlineAt = new Date(doc.deadline).getTime()
-    if (!Number.isNaN(deadlineAt) && deadlineAt - Date.now() < NEAR_DEADLINE_DAYS * DAY_MS)
-      return true
-  }
-  return false
+  return getFreshness(doc, getFreshnessCutoffs()) === 'stale'
 }
 
 /** Green FRESH badge, or red NEEDS RE-VERIFICATION badge, on quest documents. */
 export const questFreshnessBadge: DocumentBadgeComponent = (props) => {
   const doc = (props.draft || props.published) as QuestLike | null | undefined
   if (!doc) return null
-  if (needsReverification(doc)) {
+  if (getFreshness(doc, getFreshnessCutoffs()) === 'stale') {
     const red: DocumentBadgeDescription = {
       label: 'NEEDS RE-VERIFICATION',
       title: 'Stale verification or deadline is near — re-verify this quest',
@@ -185,27 +174,4 @@ export const MarkVerifiedAction: DocumentActionComponent = (props) => {
         }
       : null,
   }
-}
-
-/**
- * "Verification queue" — every quest with status=needsReverification, never
- * verified, stale (>30 days), or published with a deadline inside 60 days.
- * Cutoffs are computed once at Studio load and passed as GROQ params so the
- * date math stays exact. Sorted by deadline ascending; one click opens the quest.
- */
-export function verificationQueueItem(S: StructureBuilder) {
-  const thirtyDaysAgo = new Date(Date.now() - STALE_AFTER_DAYS * DAY_MS).toISOString()
-  const sixtyDaysOut = new Date(Date.now() + NEAR_DEADLINE_DAYS * DAY_MS).toISOString()
-  return S.listItem()
-    .title('Verification queue')
-    .icon(WarningOutlineIcon)
-    .child(
-      S.documentList()
-        .title('Verification queue')
-        .filter(
-          '_type == "quest" && (status == "needsReverification" || !defined(lastVerified) || lastVerified < $thirtyDaysAgo || (status == "published" && defined(deadline) && deadline < $sixtyDaysOut))',
-        )
-        .params({thirtyDaysAgo, sixtyDaysOut})
-        .defaultOrdering([{field: 'deadline', direction: 'asc'}]),
-    )
 }

@@ -7,6 +7,7 @@ import {Backpack, ScrollText, Star} from 'lucide-react'
 import type {QuestDetail} from '../lib/queries'
 import {deadlineLabel, deadlineTone, exactDeadline} from '../lib/deadline'
 import {getLog, startQuest, toggleDoc, toggleGate} from '../lib/questLog'
+import {FreshnessBadge} from './FreshnessBadge'
 
 /** Flattens Sanity portable-text blocks into paragraphs. */
 function briefingParagraphs(description?: unknown[]): string[] {
@@ -72,6 +73,9 @@ export function QuestDetailView({quest}: {quest: QuestDetail}) {
         )}
         <h1>{quest.title}</h1>
         <div className="provider">{quest.provider}</div>
+        <div className="freshness-row">
+          <FreshnessBadge freshness={quest.freshness} />
+        </div>
 
         <div className="hero-meta">
           {quest.amount && <span className="amount">{quest.amount}</span>}

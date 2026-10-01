@@ -1,0 +1,4 @@
+# Intentionally empty npmrc.
+# Used via `npm_config_userconfig` during `blueprints deploy` so the CLI's
+# dependency-hydration install does not inherit the user-level `allow-scripts`
+# setting that npm 11.19 rejects inside project-scoped installs (npm/cli#9783).

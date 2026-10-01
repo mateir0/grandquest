@@ -3,6 +3,7 @@ import {Backpack, GraduationCap, Hourglass, LockOpen, MapPin, ScrollText, Star} 
 import type {QuestCardData} from '../lib/queries'
 import type {QuestUnlock} from '../lib/matching'
 import {deadlineLabel, deadlineTone, exactDeadline} from '../lib/deadline'
+import {FreshnessBadge} from './FreshnessBadge'
 
 const LEVEL_LABEL: Record<string, string> = {
   undergrad: 'Undergrad',
@@ -47,6 +48,9 @@ export function QuestCard({quest, unlock}: {quest: QuestCardData; unlock?: Quest
 
       <h2 className="card-title">{quest.title}</h2>
       <div className="card-provider">{quest.provider}</div>
+      <div className="freshness-row">
+        <FreshnessBadge freshness={quest.freshness} />
+      </div>
       {quest.amount && <div className="card-amount">{quest.amount}</div>}
 
       <div className="card-meta">

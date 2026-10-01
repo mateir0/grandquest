@@ -1,5 +1,11 @@
 {
+  "scripts": {
+    "test": "node --test tests/freshness.test.cjs"
+  },
   "dependencies": {
     "typescript": "^7.0.2"
+  },
+  "devDependencies": {
+    "@sanity/blueprints": "0.28.0"
   }
 }

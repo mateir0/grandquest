@@ -18,7 +18,19 @@ export default defineConfig({
       structure: (S) =>
         S.list()
           .title('Content')
-          .items([verificationQueueItem(S), S.divider(), ...S.documentTypeListItems()]),
+          .items([
+            verificationQueueItem(S),
+            S.listItem()
+              .title('Sweep log')
+              .id('sweep-log')
+              .child(
+                S.documentTypeList('sweepLog')
+                  .title('Sweep log')
+                  .defaultOrdering([{field: 'ranAt', direction: 'desc'}]),
+              ),
+            S.divider(),
+            ...S.documentTypeListItems().filter((item) => item.getId() !== 'sweepLog'),
+          ]),
     }),
   ],
   document: {

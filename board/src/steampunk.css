@@ -1,0 +1,359 @@
+/* Quest Master's Board — Victorian steampunk per DESIGN-steampunk.md.
+   Parchment canvas, brass borders, mahogany headers, ivory cards.
+   Display/body: IM Fell English. Dates/metadata: JetBrains Mono. */
+
+:root {
+  --brass: #b5a642;
+  --mahogany: #5c0000;
+  --sepia: #704214;
+  --parchment: #f5deb3;
+  --copper: #b87333;
+  --teal: #008080;
+  --clockwork: #d46a00;
+  --ivory: #fffff0;
+  --ink: #2b2118;
+  --danger: #8f1d1d;
+  --ok: #2e6b2e;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  font-family: 'IM Fell English', Georgia, serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  background:
+    radial-gradient(1200px 500px at 20% -5%, rgba(184, 115, 51, 0.16), transparent 60%),
+    radial-gradient(900px 500px at 90% 0%, rgba(181, 166, 66, 0.18), transparent 55%),
+    repeating-linear-gradient(0deg, rgba(112, 66, 20, 0.035) 0 2px, transparent 2px 5px),
+    var(--parchment);
+}
+
+.mono,
+.chip,
+.btn,
+.tally,
+.quest-id,
+.queue-list .mono,
+.sweep-list .mono {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+.app-canvas {
+  min-height: 100dvh;
+}
+
+.board {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem 4rem;
+}
+
+.masthead {
+  background: linear-gradient(180deg, #6b0d0d, var(--mahogany));
+  color: var(--parchment);
+  border: 2px solid var(--brass);
+  border-radius: 8px;
+  padding: 1.75rem 1.5rem;
+  box-shadow: 0 6px 24px rgba(92, 0, 0, 0.35), inset 0 0 60px rgba(181, 166, 66, 0.12);
+}
+
+.masthead-plate {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.gear {
+  color: var(--brass);
+  flex-shrink: 0;
+  margin-top: 0.35rem;
+}
+
+.kicker {
+  margin: 0;
+  font-size: 0.875rem;
+  letter-spacing: 0.08em;
+  color: var(--brass);
+}
+
+.masthead h1 {
+  margin: 0.1rem 0 0.4rem;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.1;
+}
+
+.lede {
+  margin: 0;
+  max-width: 72ch;
+}
+
+.tally {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(181, 166, 66, 0.5);
+  font-size: 0.875rem;
+  color: var(--brass);
+}
+
+.notice {
+  background: var(--ivory);
+  border: 1px solid var(--brass);
+  border-left: 6px solid var(--brass);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin: 1rem 0 0;
+}
+
+.notice-bad {
+  border-left-color: var(--danger);
+}
+
+.desk {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .desk {
+    grid-template-columns: 1fr;
+  }
+}
+
+.map-room h2,
+.side-rail h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.5rem;
+  margin: 0 0 0.75rem;
+  color: var(--mahogany);
+  border-bottom: 2px solid var(--brass);
+  padding-bottom: 0.4rem;
+}
+
+.quest-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.quest-card {
+  background: var(--ivory);
+  border: 1px solid var(--sepia);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  box-shadow: 0 2px 8px rgba(43, 33, 24, 0.15);
+  animation: rise 480ms ease-out;
+}
+
+.quest-card.featured {
+  border: 2px solid var(--brass);
+}
+
+@keyframes rise {
+  from {
+    transform: translateY(16px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+.quest-head {
+  display: flex;
+  gap: 0.75rem;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.quest-head h3 {
+  margin: 0;
+  font-size: 1.35rem;
+  color: var(--mahogany);
+}
+
+.quest-provider {
+  margin: 0.1rem 0;
+  font-style: italic;
+}
+
+.quest-meta {
+  margin: 0.25rem 0 0.6rem;
+  font-size: 0.875rem;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+
+.chip {
+  display: inline-block;
+  font-size: 0.75rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 8px;
+  border: 1px solid var(--sepia);
+  background: rgba(181, 166, 66, 0.14);
+  white-space: nowrap;
+}
+
+.chip-dim {
+  opacity: 0.75;
+}
+
+.stage-verified {
+  border-color: var(--ok);
+  color: var(--ok);
+}
+
+.stage-unverified,
+.stage-disputed {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.stage-underReview {
+  border-color: var(--clockwork);
+  color: var(--clockwork);
+}
+
+.badge-fresh {
+  background: rgba(46, 107, 46, 0.14);
+  border-color: var(--ok);
+  color: var(--ok);
+}
+
+.badge-stale {
+  background: rgba(143, 29, 29, 0.12);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.plate-featured {
+  background: var(--brass);
+  border-color: var(--brass);
+  color: var(--mahogany);
+}
+
+.chronometer {
+  border-color: var(--brass);
+}
+
+.chronometer.urgent {
+  border-color: var(--clockwork);
+  color: var(--clockwork);
+}
+
+.quest-id {
+  font-size: 0.75rem;
+  opacity: 0.65;
+  margin: 0 0 0.6rem;
+  overflow-wrap: anywhere;
+}
+
+.quest-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.55rem 0.95rem;
+  cursor: pointer;
+  border: 1.5px solid var(--brass);
+  transition: transform 200ms, box-shadow 200ms;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn:not(:disabled):hover {
+  transform: scale(1.03);
+}
+
+.btn-brass {
+  background: var(--brass);
+  color: var(--mahogany);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--sepia);
+}
+
+.btn-mini {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.6rem;
+}
+
+.side-rail {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.side-rail section {
+  background: var(--ivory);
+  border: 1px solid var(--brass);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  box-shadow: 0 2px 8px rgba(43, 33, 24, 0.15);
+}
+
+.small {
+  font-size: 0.875rem;
+}
+
+.queue-list,
+.sweep-list {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.queue-list li,
+.sweep-list li {
+  display: grid;
+  gap: 0.15rem;
+  border: 1px solid rgba(112, 66, 20, 0.4);
+  border-radius: 8px;
+  padding: 0.5rem 0.65rem;
+  background: rgba(245, 222, 179, 0.35);
+}
+
+.queue-title {
+  font-size: 1.05rem;
+}
+
+.queue-taps {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.25rem;
+}
+
+.loading {
+  padding: 3rem;
+  text-align: center;
+}

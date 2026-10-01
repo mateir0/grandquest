@@ -91,6 +91,9 @@ export function HomeHero() {
           <a className="btn mahogany" href="#board">
             Begin expedition
           </a>
+          <a className="btn tour-launch" href="/?tour=1">
+            Take the 30-second tour
+          </a>
           <a className="btn ghost" href="#how">
             How it works
           </a>
