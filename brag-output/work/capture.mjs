@@ -3,7 +3,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 const OUT = path.resolve('C:/Users/Dell/grandquest/brag-output/work')
-const URL = 'https://grantquest-ruddy.vercel.app'
+const URL = 'https://grantquest.tech'
 
 const log = (...a) => console.log(...a)
 
