@@ -4,7 +4,7 @@ import {Suspense} from 'react'
 import {IM_Fell_English, JetBrains_Mono} from 'next/font/google'
 import {XpBar} from '../components/XpBar'
 import {TourGuide} from '../components/TourGuide'
-import {SignatureMark} from '../components/SignatureMark'
+import {FooterSignature} from '../components/FooterSignature'
 
 const imFellEnglish = IM_Fell_English({
   subsets: ['latin'],
@@ -80,9 +80,8 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
           <p className="footer-note">
             Scholarships are quests. Clear the gates, gather the documents, beat the deadline.
           </p>
+          <FooterSignature />
         </footer>
-
-        <SignatureMark />
       </body>
     </html>
   )

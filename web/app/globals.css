@@ -1818,36 +1818,38 @@ input[type="number"] {
 }
 
 /* ------------------------------------------------------------
-   Painter's signature — gilded IM Fell italic, lower-right.
-   Laid down by an invisible quill on first paint, then static.
+   Maker's sign-off — "A Hashir original." right-aligned in the
+   footer, gilded IM Fell italic. Base state is the finished static
+   signature (what reduced-motion visitors and no-JS see). The quill
+   write, flourish draw and brass glint live under no-preference and
+   fire once when the footer scrolls into view (.in-view). Every step
+   is compositor-only — no layout thrash.
    ------------------------------------------------------------ */
-.signature-mark {
-  position: fixed;
-  right: max(1.1rem, env(safe-area-inset-right));
-  bottom: max(1rem, env(safe-area-inset-bottom));
-  z-index: 30;
-  /* The watermark must never block the page — only the glyphs are clickable. */
-  pointer-events: none;
+.footer-signature {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 0.05em;
+  align-self: stretch;
+  width: 100%;
+  margin-top: 0.35rem;
+  text-align: right;
   user-select: none;
 }
 
-.signature-name {
-  pointer-events: auto;
+.sig-text {
+  position: relative;
+  display: inline-block;
   font-family: var(--font-display);
   font-style: italic;
   font-weight: 400;
-  font-size: clamp(1.15rem, 2.4vw, 1.55rem);
-  line-height: 1;
+  font-size: clamp(1.1rem, 3.4vw, 1.5rem);
+  line-height: 1.1;
   letter-spacing: 0.01em;
-  /* Gilt brass sheen, clipped to the glyphs. */
+  /* Gilt brass sheen clipped to the glyphs. */
   background: linear-gradient(
     100deg,
     var(--brass-dark) 0%,
-    var(--brass) 38%,
+    var(--brass) 40%,
     var(--copper) 66%,
     var(--brass-dark) 100%
   );
@@ -1855,52 +1857,92 @@ input[type="number"] {
   background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
-  /* A faint emboss so the ink reads as pressed into parchment. */
+  /* Faint emboss — ink pressed into parchment. */
   filter: drop-shadow(0 1px 0 rgba(255, 255, 240, 0.35))
-    drop-shadow(0 1px 1px rgba(43, 34, 23, 0.28));
-  opacity: 0.84;
-  /* Soft-edged mask that sweeps left→right like a nib laying ink. */
-  -webkit-mask-image: linear-gradient(
-    90deg,
-    #000 60%,
-    rgba(0, 0, 0, 0.4) 80%,
-    transparent 94%
-  );
-  mask-image: linear-gradient(
-    90deg,
-    #000 60%,
-    rgba(0, 0, 0, 0.4) 80%,
-    transparent 94%
-  );
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-size: 300% 100%;
-  mask-size: 300% 100%;
-  -webkit-mask-position: 100% 0;
-  mask-position: 100% 0;
-  animation: signature-write 1.7s cubic-bezier(0.62, 0.08, 0.32, 1) 0.35s both;
+    drop-shadow(0 1px 1px rgba(43, 34, 23, 0.26));
 }
 
-.signature-flourish {
-  width: clamp(5.2rem, 11vw, 7rem);
+/* The brass glint: a bright band duplicated over the glyphs, swept once. */
+.sig-text::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    transparent 42%,
+    rgba(255, 249, 224, 0.92) 50%,
+    transparent 58%
+  );
+  background-size: 220% 100%;
+  background-position: 160% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  opacity: 0;
+}
+
+.sig-flourish {
+  width: clamp(7rem, 42vw, 9.5rem);
   height: auto;
-  margin-top: -0.1em;
+  margin-top: -0.05em;
   overflow: visible;
 }
 
-.signature-flourish path {
+.sig-flourish path {
   fill: none;
   stroke: var(--brass-dark);
   stroke-width: 1.4;
   stroke-linecap: round;
   stroke-linejoin: round;
-  opacity: 0.8;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  animation: signature-stroke 1.05s ease-out 1.5s both;
+  opacity: 0.82;
+}
+@media (prefers-reduced-motion: no-preference) {
+  /* Pre-animation hidden state (motion visitors, before the footer is seen). */
+  .footer-signature .sig-text {
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      #000 58%,
+      rgba(0, 0, 0, 0.4) 80%,
+      transparent 94%
+    );
+    mask-image: linear-gradient(
+      90deg,
+      #000 58%,
+      rgba(0, 0, 0, 0.4) 80%,
+      transparent 94%
+    );
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: 300% 100%;
+    mask-size: 300% 100%;
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+  }
+
+  .footer-signature .sig-flourish path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+
+  /* a. Quill writes the phrase. */
+  .footer-signature.in-view .sig-text {
+    animation: sig-write 1.5s cubic-bezier(0.62, 0.08, 0.32, 1) 0.1s both;
+  }
+
+  /* b. Flourish curls itself in after the writing finishes. */
+  .footer-signature.in-view .sig-flourish path {
+    animation: sig-stroke 0.9s ease-out 1.65s both;
+  }
+
+  /* c. Soft brass glint sweeps across once the ink is laid. */
+  .footer-signature.in-view .sig-text::after {
+    animation: sig-glint 0.9s ease-in-out 2.65s forwards;
+  }
 }
 
-@keyframes signature-write {
+@keyframes sig-write {
   from {
     -webkit-mask-position: 100% 0;
     mask-position: 100% 0;
@@ -1911,8 +1953,25 @@ input[type="number"] {
   }
 }
 
-@keyframes signature-stroke {
+@keyframes sig-stroke {
   to {
     stroke-dashoffset: 0;
+  }
+}
+
+@keyframes sig-glint {
+  0% {
+    background-position: 160% 0;
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    background-position: -60% 0;
+    opacity: 0;
   }
 }
