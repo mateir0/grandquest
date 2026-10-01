@@ -4,6 +4,7 @@ import {Suspense} from 'react'
 import {IM_Fell_English, JetBrains_Mono} from 'next/font/google'
 import {XpBar} from '../components/XpBar'
 import {TourGuide} from '../components/TourGuide'
+import {SignatureMark} from '../components/SignatureMark'
 
 const imFellEnglish = IM_Fell_English({
   subsets: ['latin'],
@@ -80,6 +81,8 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
             Scholarships are quests. Clear the gates, gather the documents, beat the deadline.
           </p>
         </footer>
+
+        <SignatureMark />
       </body>
     </html>
   )
