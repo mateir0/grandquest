@@ -13,18 +13,18 @@ Built for the DEV Sanity Challenge (Path Two).
 
 ## What it does
 
-- **Quest board** — all 14 scholarships with live eligibility verdicts against your profile.
+- **Quest board** — all 25 scholarships with live eligibility verdicts against your profile.
 - **Quest detail** — briefing, eligibility gates as structured data (not prose), document checklist, deadline countdown.
 - **Quest log + XP** — track applications, earn XP per action, level up. Saved locally.
 - **Eligibility engine** — profile-vs-gates matching, client-side and transparent.
-- **Freshness badges** — scholarship info rots. Every quest shows FRESH or NEEDS RE-VERIFICATION based on verification age and deadline proximity.
+- **Freshness badges** — scholarship info rots. Every quest shows FRESH or NEEDS RE-VERIFICATION based on verification age and whether the deadline has passed.
 - **Verification workflow** — quests move unverified → under review → verified through Sanity's official Workflows API. A daily scheduled function sweeps stale quests back for re-verification and logs every sweep.
 - **Quest Master's Board** — a separate Sanity App SDK app for working the verification queue.
 - **Guided tour** — 30-second tour for first-time visitors.
 
 ## The data
 
-14 real scholarships. Nothing invented — no guessed deadlines, amounts, or requirements. (Chevening, Eiffel, ETH Zurich, Rhodes ×4, GKS-U ×4, and more.)
+25 real scholarships. Nothing invented — no guessed deadlines, amounts, or requirements. (Fulbright, DAAD, Gates Cambridge, Clarendon, Knight-Hennessy, Schwarzman, Chevening, Eiffel, ETH Zurich, Rhodes ×4, GKS-U ×4, and more.)
 
 ## Repo layout
 studio/ # Sanity Studio — schemas, verification workflow, deadline sweeper
