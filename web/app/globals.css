@@ -103,6 +103,14 @@ img {
   padding: 1rem 1.5rem 4rem;
 }
 
+/* Keep a single small, consistent gap below the navbar on every page.
+   The container's 1rem top padding is the breathing gap; the first content
+   block must not add its own top padding on top of it (e.g. .hero, .empty). */
+.container > :first-child {
+  padding-top: 0;
+  margin-top: 0;
+}
+
 /* ------------------------------------------------------------
    Top bar
    ------------------------------------------------------------ */
