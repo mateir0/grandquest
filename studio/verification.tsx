@@ -17,7 +17,7 @@ export {verificationQueueItem} from './verificationQueue'
  * Freshness-verification workflow for quest documents.
  *
  * Red badge rule ("NEEDS RE-VERIFICATION"): lastVerified is older than 30 days
- * (or missing/invalid), OR the deadline is within 60 days.
+ * (or missing/invalid), OR the deadline has already passed.
  * Everything else shows a green "FRESH" badge.
  *
  * Plain Structure Builder + badges + actions only — no new plugins.
@@ -42,7 +42,7 @@ export const questFreshnessBadge: DocumentBadgeComponent = (props) => {
   if (getFreshness(doc, getFreshnessCutoffs()) === 'stale') {
     const red: DocumentBadgeDescription = {
       label: 'NEEDS RE-VERIFICATION',
-      title: 'Stale verification or deadline is near — re-verify this quest',
+      title: 'Stale verification or the deadline has passed — re-verify this quest',
       color: 'danger',
       icon: WarningOutlineIcon,
     }
@@ -50,7 +50,7 @@ export const questFreshnessBadge: DocumentBadgeComponent = (props) => {
   }
   const green: DocumentBadgeDescription = {
     label: 'FRESH',
-    title: 'Verified within the last 30 days and the deadline is not near',
+    title: 'Verified within the last 30 days and the deadline has not passed',
     color: 'success',
     icon: CheckmarkIcon,
   }

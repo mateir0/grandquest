@@ -31,20 +31,24 @@ const rule = load('shared/freshness.ts')
 const now = new Date('2026-10-01T12:00:00.000Z')
 const cutoffs = rule.getFreshnessCutoffs(now)
 const farDeadline = '2027-02-01T12:00:00.000Z'
+const nearDeadline = '2026-10-06T12:00:00.000Z' // 5 days out — still fresh under the new rule
 const recent = now.toISOString()
 const old = '2026-08-02T12:00:00.000Z'
+const passed = '2026-09-15T12:00:00.000Z' // deadline before `now`
 const fixtures = [
-  ['recent verification', {lastVerified: recent, deadline: farDeadline}, 'fresh'],
-  ['60 days old', {lastVerified: old, deadline: farDeadline}, 'stale'],
+  // The badge measures verification recency + whether the deadline has passed,
+  // NOT deadline proximity. Deadline urgency is the countdown's job.
+  ['verified today, deadline in 5 days', {lastVerified: recent, deadline: nearDeadline}, 'fresh'],
+  ['verified today, deadline passed', {lastVerified: recent, deadline: passed}, 'stale'],
+  ['verified 40 days ago, deadline far out', {lastVerified: old, deadline: farDeadline}, 'stale'],
+  ['unset deadline, verified today', {lastVerified: recent}, 'fresh'],
   ['exact 30-day boundary', {lastVerified: cutoffs.staleCutoff}, 'fresh'],
   ['1ms older than 30 days', {lastVerified: '2026-09-01T11:59:59.999Z'}, 'stale'],
-  ['exact 60-day deadline', {lastVerified: recent, deadline: cutoffs.soonCutoff}, 'stale'],
-  ['1ms beyond 60 days', {lastVerified: recent, deadline: '2026-11-30T12:00:00.001Z'}, 'fresh'],
-  ['past deadline', {lastVerified: recent, deadline: old}, 'stale'],
+  ['deadline exactly now', {lastVerified: recent, deadline: cutoffs.nowCutoff}, 'fresh'],
+  ['deadline 1ms ago', {lastVerified: recent, deadline: '2026-10-01T11:59:59.999Z'}, 'stale'],
   ['missing verification', {deadline: farDeadline}, 'stale'],
   ['null verification', {lastVerified: null}, 'stale'],
   ['invalid verification', {lastVerified: 'not-a-date'}, 'stale'],
-  ['missing deadline', {lastVerified: recent}, 'fresh'],
   ['null deadline', {lastVerified: recent, deadline: null}, 'fresh'],
   ['invalid deadline', {lastVerified: recent, deadline: 'not-a-date'}, 'fresh'],
   ['timezone-equivalent boundary', {lastVerified: '2026-09-01T16:00:00+04:00'}, 'fresh'],
@@ -54,10 +58,10 @@ async function groq(query, dataset, params = cutoffs) {
   return (await evaluate(parse(query), {dataset, params})).get()
 }
 
-test('cutoffs use one clock instant and exact 30/60-day durations', () => {
+test('cutoffs use one clock instant and an exact 30-day decay window', () => {
   assert.deepEqual(cutoffs, {
     staleCutoff: '2026-09-01T12:00:00.000Z',
-    soonCutoff: '2026-11-30T12:00:00.000Z',
+    nowCutoff: '2026-10-01T12:00:00.000Z',
   })
 })
 
@@ -99,7 +103,7 @@ test('all fetch helpers supply fresh cutoff parameters and bypass the cache', as
   assert.equal(calls.length, 3)
   for (const [, params, options] of calls) {
     assert.ok(Number.isFinite(Date.parse(params.staleCutoff)))
-    assert.equal(Date.parse(params.soonCutoff) - Date.parse(params.staleCutoff), 90 * 86_400_000)
+    assert.equal(Date.parse(params.nowCutoff) - Date.parse(params.staleCutoff), 30 * 86_400_000)
     assert.equal(options.cache, 'no-store')
   }
   assert.equal(calls[1][1].slug, 'example')
@@ -127,12 +131,12 @@ test('queue derives membership, preserves manual flags, and sorts stale first', 
   const dataset = [
     {_id: 'manual-fresh', _type: 'quest', status: 'needsReverification', lastVerified: recent, deadline: farDeadline},
     {_id: 'stale-late', _type: 'quest', status: 'published', lastVerified: old, deadline: '2027-03-01T00:00:00Z'},
-    {_id: 'near-review', _type: 'quest', status: 'inReview', lastVerified: recent, deadline: cutoffs.soonCutoff},
+    {_id: 'passed-deadline', _type: 'quest', status: 'inReview', lastVerified: recent, deadline: passed},
     {_id: 'fresh', _type: 'quest', status: 'published', lastVerified: recent, deadline: farDeadline},
     {_id: 'other', _type: 'eligibilityGate'},
   ]
   const queue = await groq(VERIFICATION_QUEUE_QUERY, dataset)
-  assert.deepEqual(queue.map((q) => q._id), ['near-review', 'stale-late', 'manual-fresh'])
+  assert.deepEqual(queue.map((q) => q._id), ['passed-deadline', 'stale-late', 'manual-fresh'])
 })
 
 test('web badge renders the projected value with no date evaluation', () => {
