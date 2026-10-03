@@ -5,6 +5,7 @@ import {
   ENGINE_API_VERSION,
   type WorkflowClient,
 } from '@sanity/workflow-engine'
+import {errorMessage, logError, logInfo} from './logger.js'
 
 const PROJECT_ID = 'aitdwcxh'
 const DATASET = 'production'
@@ -59,66 +60,83 @@ function reasonFor(quest: QuestRow, staleCutoff: string, nowCutoff: string): str
  * immutable `sweepLog` document per reopened quest.
  */
 export const handler = scheduledEventHandler(async ({context}) => {
-  const client = createClient({
-    projectId: PROJECT_ID,
-    dataset: DATASET,
-    apiVersion: ENGINE_API_VERSION,
-    token: context.clientOptions?.token,
-    useCdn: false,
-    perspective: 'raw',
-  })
-  const engine = createEngine({
-    client: client as unknown as WorkflowClient,
-    workflowResource: {type: 'dataset', id: `${PROJECT_ID}.${DATASET}`},
-    tag: TAG,
-  })
+  const startedAt = Date.now()
+  const runId = new Date(startedAt).toISOString()
+  logInfo('sweep_start', {run_id: runId})
 
-  const now = Date.now()
-  const staleCutoff = new Date(now - STALE_AFTER_DAYS * DAY_MS).toISOString()
-  const nowCutoff = new Date(now).toISOString()
+  // Which phase failed, for the sweep_error line. No stacks, no bodies.
+  let stage: 'fetch' | 'evaluate' | 'update' = 'fetch'
+  try {
+    const client = createClient({
+      projectId: PROJECT_ID,
+      dataset: DATASET,
+      apiVersion: ENGINE_API_VERSION,
+      token: context.clientOptions?.token,
+      useCdn: false,
+      perspective: 'raw',
+    })
+    const engine = createEngine({
+      client: client as unknown as WorkflowClient,
+      workflowResource: {type: 'dataset', id: `${PROJECT_ID}.${DATASET}`},
+      tag: TAG,
+    })
 
-  const staleQuests = await client.fetch<QuestRow[]>(
-    `*[_type == "quest" && !(_id in path("drafts.**")) && ${STALE_FILTER}]{_id, title, lastVerified, deadline}`,
-    {staleCutoff, nowCutoff},
-  )
+    const now = Date.now()
+    const staleCutoff = new Date(now - STALE_AFTER_DAYS * DAY_MS).toISOString()
+    const nowCutoff = new Date(now).toISOString()
 
-  const instances = await engine.query<InstanceRow[]>({
-    groq: `*[_type == "sanity.workflow.instance" && tag == $tag && definition == "${DEFINITION}"]{_id, currentStage, fields}`,
-  })
-  const instanceByDoc = new Map<string, InstanceRow>()
-  for (const instance of instances) {
-    const docId = subjectDocId(instance)
-    if (docId) instanceByDoc.set(docId, instance)
-  }
+    stage = 'fetch'
+    const staleQuests = await client.fetch<QuestRow[]>(
+      `*[_type == "quest" && !(_id in path("drafts.**")) && ${STALE_FILTER}]{_id, title, lastVerified, deadline}`,
+      {staleCutoff, nowCutoff},
+    )
 
-  let reopened = 0
-  let skipped = 0
-  for (const quest of staleQuests) {
-    const instance = instanceByDoc.get(quest._id)
-    // Only a verified instance can reach `unverified` through a declared
-    // transition; anything already unverified/underReview/disputed is left alone.
-    if (!instance || instance.currentStage !== 'verified') {
-      skipped += 1
-      continue
+    const instances = await engine.query<InstanceRow[]>({
+      groq: `*[_type == "sanity.workflow.instance" && tag == $tag && definition == "${DEFINITION}"]{_id, currentStage, fields}`,
+    })
+
+    stage = 'evaluate'
+    const instanceByDoc = new Map<string, InstanceRow>()
+    for (const instance of instances) {
+      const docId = subjectDocId(instance)
+      if (docId) instanceByDoc.set(docId, instance)
     }
 
-    await engine.fireAction({
-      instanceId: instance._id,
-      activity: 'monitor',
-      action: 'flag-for-reverification',
-    })
+    stage = 'update'
+    let reopened = 0
+    for (const quest of staleQuests) {
+      const instance = instanceByDoc.get(quest._id)
+      // Only a verified instance can reach `unverified` through a declared
+      // transition; anything already unverified/underReview/disputed is left alone.
+      if (!instance || instance.currentStage !== 'verified') {
+        continue
+      }
 
-    // Append-only: created once, never updated.
-    await client.create({
-      _type: 'sweepLog',
-      quest: {_type: 'reference', _ref: quest._id},
-      ranAt: new Date().toISOString(),
-      reason: reasonFor(quest, staleCutoff, nowCutoff),
+      await engine.fireAction({
+        instanceId: instance._id,
+        activity: 'monitor',
+        action: 'flag-for-reverification',
+      })
+
+      // Append-only: created once, never updated.
+      await client.create({
+        _type: 'sweepLog',
+        quest: {_type: 'reference', _ref: quest._id},
+        ranAt: new Date().toISOString(),
+        reason: reasonFor(quest, staleCutoff, nowCutoff),
+      })
+      reopened += 1
+    }
+
+    // Summary counts only — never per-quest lines for the full sweep.
+    logInfo('sweep_complete', {
+      quests_checked: staleQuests.length,
+      stale_found: staleQuests.length,
+      instances_updated: reopened,
+      duration_ms: Date.now() - startedAt,
     })
-    reopened += 1
+  } catch (err) {
+    logError('sweep_error', {stage, message: errorMessage(err)})
+    throw err
   }
-
-  console.log(
-    `deadline-sweeper ran at ${new Date().toISOString()}: stale=${staleQuests.length} reopened=${reopened} skipped=${skipped}`,
-  )
 })

@@ -1,5 +1,6 @@
 import {cache} from 'react'
 import {getQuests, type QuestCardData} from './queries'
+import {errorMessage, logError} from './logger'
 import {deadlineLabel, deadlineTone, exactDeadline, type DeadlineTone} from './deadline'
 
 export interface QuestLoad {
@@ -15,7 +16,8 @@ export interface QuestLoad {
 export const loadQuests = cache(async (): Promise<QuestLoad> => {
   try {
     return {quests: await getQuests(), failed: false}
-  } catch {
+  } catch (err) {
+    logError('sanity_fetch_error', {query_name: 'getQuests', message: errorMessage(err)})
     return {quests: [], failed: true}
   }
 })
