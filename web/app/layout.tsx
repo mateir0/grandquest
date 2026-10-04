@@ -5,6 +5,7 @@ import {IM_Fell_English, JetBrains_Mono} from 'next/font/google'
 import {XpBar} from '../components/XpBar'
 import {TourGuide} from '../components/TourGuide'
 import {FooterSignature} from '../components/FooterSignature'
+import {Analytics} from '@vercel/analytics/next'
 
 const imFellEnglish = IM_Fell_English({
   subsets: ['latin'],
@@ -87,6 +88,7 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
         </header>
 
         <main className="container">{children}</main>
+        <Analytics />
 
         <Suspense fallback={null}>
           <TourGuide />
