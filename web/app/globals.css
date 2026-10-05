@@ -534,9 +534,9 @@ select:focus {
 }
 
 .card-amount {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 0.95rem;
-  color: var(--teal);
+  color: var(--ink-soft);
 }
 
 .card-meta {
