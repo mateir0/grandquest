@@ -9,12 +9,12 @@
   --parchment: #f5deb3;
   --ivory: #fffff0;
   --brass: #b5a642;
-  --brass-dark: #8f8230;
+  --brass-dark: #6e631f;
   --mahogany: #5c0000;
   --sepia: #704214;
-  --copper: #b87333;
+  --copper: #8a521f;
   --teal: #008080;
-  --clockwork: #d46a00;
+  --clockwork: #964a00;
   --ink: #2b2217;
   --ink-soft: #4a3b29;
   --muted: #6e5b43;
@@ -463,7 +463,7 @@ select:focus {
 }
 
 .tag.is-empty {
-  opacity: 0.55;
+  opacity: 0.75;
 }
 
 .freshness-row {
@@ -650,6 +650,11 @@ select:focus {
   border-radius: var(--radius);
 }
 
+/* Empty states use an h1 (page heading) sized like the old h2. */
+.empty h1 {
+  font-size: 1.5rem;
+}
+
 .board-empty p,
 .empty p {
   max-width: 54ch;
@@ -690,7 +695,7 @@ select:focus {
 
 .btn.primary {
   color: var(--parchment);
-  background: linear-gradient(180deg, var(--brass), var(--brass-dark));
+  background: linear-gradient(180deg, var(--brass-dark), #595218);
   text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
 }
 
@@ -1974,4 +1979,32 @@ input[type="number"] {
     background-position: -60% 0;
     opacity: 0;
   }
+}
+
+/* ------------------------------------------------------------
+   Accessibility: skip link + visible keyboard focus.
+   Brass-ring focus stays in-theme (no default blue outlines).
+   ------------------------------------------------------------ */
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 100;
+  padding: 0.6rem 1rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--mahogany);
+  background: var(--ivory);
+  border: 2px solid var(--brass);
+  border-radius: var(--radius);
+  transition: top 0.15s ease;
+}
+
+.skip-link:focus-visible {
+  top: 0.75rem;
+}
+
+:focus-visible {
+  outline: 2px solid var(--mahogany);
+  outline-offset: 2px;
 }

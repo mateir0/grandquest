@@ -46,6 +46,14 @@ export function QuestLog({
   const [remote, setRemote] = useState<ServerLogData | null>(serverLog ?? null)
   const [confirming, setConfirming] = useState<string | null>(null)
   useEffect(() => {
+    if (!confirming) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setConfirming(null)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [confirming])
+  useEffect(() => {
     setRemote(serverLog ?? null)
   }, [serverLog])
 
@@ -126,7 +134,7 @@ export function QuestLog({
   if (rows.length === 0) {
     return (
       <div className="empty">
-        <h2>No quests yet, adventurer. The board awaits →</h2>
+        <h1>No quests yet, adventurer. The board awaits →</h1>
         <p>
           Tick a gate or gather a document on any quest and it will be entered
           here automatically — or start one deliberately and watch the XP roll in.
@@ -238,7 +246,7 @@ export function QuestLog({
                       <button className="btn ghost" onClick={() => abandon(q)}>
                         Abandon
                       </button>
-                      <button className="btn primary" onClick={() => setConfirming(null)}>
+                      <button className="btn primary" onClick={() => setConfirming(null)} autoFocus>
                         Keep quest
                       </button>
                     </div>

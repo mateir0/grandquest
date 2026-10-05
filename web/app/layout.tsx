@@ -61,6 +61,9 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
     <html lang="en" className={`${imFellEnglish.variable} ${jetBrainsMono.variable}`}>
       <body>
+        <a href="#main" className="skip-link">
+          Skip to content
+        </a>
         <header className="topbar">
           <div className="brand-wrapper">
             <a href="/" className="brand">
@@ -90,7 +93,9 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
           </a>
         </header>
 
-        <main className="container">{children}</main>
+        <main className="container" id="main" tabIndex={-1}>
+          {children}
+        </main>
         <Analytics />
         {/* Cloudflare Web Analytics */}
         <script

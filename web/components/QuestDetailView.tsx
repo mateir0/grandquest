@@ -50,6 +50,14 @@ export function QuestDetailView({
   const [cleared, setCleared] = useState<string[]>([])
   const [gathered, setGathered] = useState<string[]>([])
   const [confirming, setConfirming] = useState(false)
+  useEffect(() => {
+    if (!confirming) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setConfirming(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [confirming])
 
   // Read the quest log after mount — localStorage is not available during SSR.
   // Logged-in users read ONLY the server entry supplied by the page.
@@ -265,7 +273,7 @@ export function QuestDetailView({
             <button className="btn ghost" onClick={onAbandon}>
               Abandon
             </button>
-            <button className="btn primary" onClick={() => setConfirming(false)}>
+            <button className="btn primary" onClick={() => setConfirming(false)} autoFocus>
               Keep quest
             </button>
           </div>

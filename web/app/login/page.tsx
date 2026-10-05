@@ -104,7 +104,8 @@ export default function LoginPage() {
         {step === 'email' ? (
           <form onSubmit={sendCode}>
             <div className="field">
-              <span
+              <label
+                htmlFor="gq-email"
                 style={{
                   marginBottom: '0.3rem',
                   fontFamily: 'var(--font-mono)',
@@ -115,8 +116,9 @@ export default function LoginPage() {
                 }}
               >
                 Email
-              </span>
+              </label>
               <input
+                id="gq-email"
                 type="text"
                 inputMode="email"
                 autoComplete="email"
@@ -158,7 +160,8 @@ export default function LoginPage() {
               </button>
             </p>
             <div className="field">
-              <span
+              <label
+                htmlFor="gq-code"
                 style={{
                   marginBottom: '0.3rem',
                   fontFamily: 'var(--font-mono)',
@@ -169,8 +172,9 @@ export default function LoginPage() {
                 }}
               >
                 6-digit code
-              </span>
+              </label>
               <input
+                id="gq-code"
                 type="text"
                 inputMode="numeric"
                 autoComplete="one-time-code"

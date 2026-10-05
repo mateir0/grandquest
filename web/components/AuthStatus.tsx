@@ -16,14 +16,17 @@ const LOG_KEY = 'grantquest.log'
 function QuietButton({
   onClick,
   children,
+  autoFocus,
 }: {
   onClick: () => void
   children: React.ReactNode
+  autoFocus?: boolean
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
+      autoFocus={autoFocus}
       style={{
         background: 'none',
         border: 0,
@@ -48,6 +51,14 @@ export function AuthStatus() {
   const [confirming, setConfirming] = useState(false)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
+  useEffect(() => {
+    if (!confirming) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setConfirming(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [confirming])
 
   useEffect(() => {
     const supabase = createClient()
@@ -97,7 +108,7 @@ export function AuthStatus() {
         >
           Delete everything
         </QuietButton>
-        <QuietButton onClick={() => setConfirming(false)}>Keep my data</QuietButton>
+        <QuietButton onClick={() => setConfirming(false)} autoFocus>Keep my data</QuietButton>
       </span>
     )
   }
@@ -145,7 +156,7 @@ export function AuthStatus() {
         <QuietButton onClick={deleteEverything}>
           {busy ? 'Deleting…' : 'Delete everything'}
         </QuietButton>
-        <QuietButton onClick={() => !busy && setConfirming(false)}>
+        <QuietButton onClick={() => !busy && setConfirming(false)} autoFocus>
           Keep my account
         </QuietButton>
         {error && (
