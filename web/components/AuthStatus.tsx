@@ -54,7 +54,9 @@ export function AuthStatus() {
       style={{display: 'inline-flex', alignItems: 'center', gap: '0.6rem'}}
       title={email}
     >
-      <span className="player-label">{email}</span>
+      <span className="player-label" style={{textTransform: 'none'}}>
+        {email.split('@')[0].toLowerCase()}
+      </span>
       <button
         type="button"
         onClick={signOut}
