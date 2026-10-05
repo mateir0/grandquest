@@ -1,6 +1,7 @@
 import {notFound} from 'next/navigation'
 import type {Metadata} from 'next'
-import {getQuest} from '../../../lib/queries'
+import {getQuest, type QuestDetail} from '../../../lib/queries'
+import {exactDeadline} from '../../../lib/deadline'
 import {getServerLog} from '../../../lib/serverQuestLog'
 import {QuestDetailView} from '../../../components/QuestDetailView'
 
@@ -38,6 +39,49 @@ export async function generateMetadata({
     alternates: {canonical},
     openGraph: {url: canonical},
   }
+}
+
+const LEVEL_LABEL: Record<string, string> = {
+  undergrad: 'undergraduate',
+  masters: "master's",
+  phd: 'PhD',
+}
+
+/**
+ * Plain-language quotable summary built ONLY from real Sanity fields.
+ * Server-rendered so answer engines can quote it verbatim without JS.
+ * Missing data is skipped, never invented.
+ */
+function QuestSummary({quest}: {quest: QuestDetail}) {
+  const gates = quest.gates ?? []
+  const documents = quest.documents ?? []
+  const level = quest.level && LEVEL_LABEL[quest.level]
+  const closes = exactDeadline(quest.deadline)
+
+  const amount = quest.amount ? quest.amount.replace(/[.]+$/, '') : ''
+  const what = `${quest.title} is a scholarship from ${quest.provider}` +
+    (level ? ` for ${level} students` : '') +
+    (amount ? ` worth ${amount}` : '') +
+    '.'
+  const scope =
+    `It lists ${gates.length} eligibilit${gates.length === 1 ? 'y gate' : 'y gates'} to clear` +
+    ` and requires ${documents.length} document${documents.length === 1 ? '' : 's'}.` +
+    (quest.countries?.length ? ` Listed for ${quest.countries.join(', ')}.` : '')
+  return (
+    <section className="briefing" aria-label="Quest summary">
+      <strong>Summary</strong>
+      <div className="briefing-content">
+        <p>{what}</p>
+        <p>
+          {scope}
+          {closes ? ` ${closes} for applications.` : ''}
+          {quest.freshness === 'stale'
+            ? ' This listing is flagged as needing re-verification — confirm details with the official source before applying.'
+            : ''}
+        </p>
+      </div>
+    </section>
+  )
 }
 
 /** Quest detail — fetched on the server, interactive checklists live in the client view. */
@@ -81,6 +125,7 @@ export default async function QuestPage({params}: {params: {slug: string}}) {
         {' → '}
         <span aria-current="page">{quest.title}</span>
       </nav>
+      <QuestSummary quest={quest} />
       <QuestDetailView
         quest={quest}
         serverEntry={serverEntry}

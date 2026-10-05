@@ -1,0 +1,38 @@
+# GrantQuest
+
+> GrantQuest is a scholarship hunt presented as an RPG quest log. Each
+> scholarship is a quest with eligibility gates to clear, documents to gather,
+> and a deadline countdown to beat.
+
+## Key pages
+
+- [Quest board](https://grantquest.tech/#board): all published scholarships.
+- [How it works](https://grantquest.tech/#how): chart the quest, clear the gates, gather the documents, beat the deadline.
+- [Quest log](https://grantquest.tech/log): the signed-in adventurer's record of started quests, states, and XP.
+- [Sign in](https://grantquest.tech/login): one-time email code or Google, no passwords. Syncs the quest log across devices.
+- [Privacy Policy](https://grantquest.tech/privacy): what is collected and why.
+- [Terms of Service](https://grantquest.tech/terms): content honesty and acceptable use.
+
+## Scholarship categories on the board
+
+25 published quests spanning undergraduate, master's, PhD, and any-level study,
+across Italy, Nauru, Canada, the United Kingdom, Germany, France, Switzerland,
+the United States, Brazil, India, Nigeria, Pakistan, Bermuda, Hong Kong SAR,
+Israel, China, and Sweden. Examples include Chevening (UK), DAAD EPOS (Germany),
+Erasmus Mundus (EU), Fulbright (USA), and Rhodes (multiple regions).
+
+## How quest data is verified
+
+Quest data is verified to our best effort and flagged when it needs
+re-verification. Always confirm deadlines and eligibility with the official
+source before applying.
+
+## Accounts and data
+
+Exploring the board needs no account. An account stores only an email address
+plus quest progress (states, cleared gates, gathered documents) and XP, to sync
+across devices. Accounts and all data can be deleted in-app or by email.
+
+## Contact
+
+- Email: hello@grantquest.tech
