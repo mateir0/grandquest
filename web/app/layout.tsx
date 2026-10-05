@@ -118,6 +118,11 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
           <p className="footer-note">
             Scholarships are quests. Clear the gates, gather the documents, beat the deadline.
           </p>
+          <p className="footer-note">
+            <a href="/privacy">Privacy</a>
+            {' · '}
+            <a href="/terms">Terms</a>
+          </p>
           <FooterSignature />
         </footer>
       </body>
