@@ -168,6 +168,26 @@ img {
   color: var(--sepia);
 }
 
+/* Navbar avatar: small themed circle with the user's initial. */
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 2rem;
+  height: 2rem;
+  min-height: 0;
+  border-radius: 50%;
+  background: var(--mahogany);
+  color: var(--parchment);
+  border: 2px solid var(--brass);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1;
+  text-decoration: none;
+}
+
 .topbar nav {
   display: flex;
   gap: 1.25rem;

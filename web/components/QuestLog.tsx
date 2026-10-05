@@ -46,14 +46,18 @@ export function QuestLog({
   const [remote, setRemote] = useState<ServerLogData | null>(serverLog ?? null)
   const [confirming, setConfirming] = useState<string | null>(null)
   const [pending, setPending] = useState<string | null>(null)
+  const [wipeConfirm, setWipeConfirm] = useState(false)
   useEffect(() => {
-    if (!confirming) return
+    if (!confirming && !wipeConfirm) return
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setConfirming(null)
+      if (e.key === 'Escape') {
+        setConfirming(null)
+        setWipeConfirm(false)
+      }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [confirming])
+  }, [confirming, wipeConfirm])
   useEffect(() => {
     setRemote(serverLog ?? null)
   }, [serverLog])
@@ -302,6 +306,59 @@ export function QuestLog({
           )
         })}
       </div>
+      {!loggedIn && rows.length > 0 && (
+        <div style={{marginTop: '0.75rem'}}>
+          {!wipeConfirm ? (
+            <button
+              type="button"
+              onClick={() => setWipeConfirm(true)}
+              style={{
+                background: 'none',
+                border: 0,
+                padding: 0,
+                minHeight: 0,
+                cursor: 'pointer',
+                color: 'var(--muted)',
+                fontFamily: 'var(--font-body)',
+                fontSize: '0.85rem',
+                textDecoration: 'underline',
+              }}
+            >
+              Delete my data
+            </button>
+          ) : (
+            <div>
+              <p className="muted-note" style={{marginBottom: '0.5rem'}}>
+                Delete your local quest log? This cannot be undone.
+              </p>
+              <div style={{display: 'flex', gap: '0.75rem', flexWrap: 'wrap'}}>
+                <button
+                  className="btn ghost"
+                  onClick={() => {
+                    try {
+                      localStorage.removeItem('grantquest.log')
+                    } catch {
+                      /* ignore */
+                    }
+                    setWipeConfirm(false)
+                    window.dispatchEvent(new Event('grantquest:xp'))
+                    setTick((t) => t + 1)
+                  }}
+                >
+                  Delete everything
+                </button>
+                <button
+                  className="btn primary"
+                  onClick={() => setWipeConfirm(false)}
+                  autoFocus
+                >
+                  Keep my data
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </>
   )
 }
