@@ -45,6 +45,7 @@ export function QuestLog({
   const [mounted, setMounted] = useState(false)
   const [remote, setRemote] = useState<ServerLogData | null>(serverLog ?? null)
   const [confirming, setConfirming] = useState<string | null>(null)
+  const [pending, setPending] = useState<string | null>(null)
   useEffect(() => {
     if (!confirming) return
     const onKey = (e: KeyboardEvent) => {
@@ -120,15 +121,57 @@ export function QuestLog({
 
   const abandon = async (row: Row) => {
     if (loggedIn) {
-      await abandonQuestServer(row.slug)
-      const fresh = await getServerLog()
-      if (fresh) setRemote(fresh)
-      window.dispatchEvent(new Event('grantquest:xp'))
+      setPending(row.key)
+      try {
+        await abandonQuestServer(row.slug)
+        const fresh = await getServerLog()
+        if (fresh) setRemote(fresh)
+        window.dispatchEvent(new Event('grantquest:xp'))
+      } finally {
+        setPending(null)
+      }
     } else {
       if (row.questId) abandonQuest(row.questId)
       setTick((t) => t + 1)
     }
     setConfirming(null)
+  }
+
+  /** Runs a server mutation with pending treatment — no double-submits. */
+  const runServer = async (key: string, fn: () => Promise<void>) => {
+    setPending(key)
+    try {
+      await fn()
+      const fresh = await getServerLog()
+      if (fresh) setRemote(fresh)
+      window.dispatchEvent(new Event('grantquest:xp'))
+    } finally {
+      setPending(null)
+    }
+  }
+
+  if (!mounted && !loggedIn) {
+    // Local log isn't readable before mount — skeleton, never an empty flash.
+    return (
+      <>
+        <div className="board-head" aria-busy="true" aria-label="Loading quest log">
+          <div>
+            <span className="eyebrow">Adventurer&apos;s record</span>
+            <div className="sk sk-title" style={{width: '12rem', height: '2.5rem'}} />
+            <div className="sk sk-sub" style={{width: '18rem'}} />
+          </div>
+        </div>
+        <div className="section" aria-hidden="true">
+          {Array.from({length: 2}).map((_, i) => (
+            <div className="logcard" key={i}>
+              <div className="sk sk-title" style={{width: '60%'}} />
+              <div className="sk sk-sub" style={{width: '30%'}} />
+              <div className="sk sk-meta" style={{width: '80%'}} />
+            </div>
+          ))}
+        </div>
+      </>
+    )
   }
 
   if (rows.length === 0) {
@@ -185,37 +228,35 @@ export function QuestLog({
                   {next && (
                     <button
                       className="btn primary"
-                      onClick={async () => {
+                      disabled={loggedIn && pending === q.key}
+                      onClick={() => {
                         if (loggedIn) {
-                          await advanceQuestServer(q.slug)
-                          const fresh = await getServerLog()
-                          if (fresh) setRemote(fresh)
-                          window.dispatchEvent(new Event('grantquest:xp'))
+                          void runServer(q.key, () => advanceQuestServer(q.slug))
                         } else {
                           if (q.questId) advanceQuest(q.questId)
                           setTick((t) => t + 1)
                         }
                       }}
                     >
-                      Advance to {STATE_LABEL[next]}
+                      {loggedIn && pending === q.key
+                        ? 'Advancing…'
+                        : `Advance to ${STATE_LABEL[next]}`}
                     </button>
                   )}
                   {!terminal && (
                     <button
                       className="btn ghost"
-                      onClick={async () => {
+                      disabled={loggedIn && pending === q.key}
+                      onClick={() => {
                         if (loggedIn) {
-                          await rejectQuestServer(q.slug)
-                          const fresh = await getServerLog()
-                          if (fresh) setRemote(fresh)
-                          window.dispatchEvent(new Event('grantquest:xp'))
+                          void runServer(q.key, () => rejectQuestServer(q.slug))
                         } else {
                           if (q.questId) rejectQuest(q.questId)
                           setTick((t) => t + 1)
                         }
                       }}
                     >
-                      Mark rejected
+                      {loggedIn && pending === q.key ? 'Rejecting…' : 'Mark rejected'}
                     </button>
                   )}
                   <button
@@ -243,8 +284,12 @@ export function QuestLog({
                       Abandon this quest? Your progress on it will be lost.
                     </p>
                     <div style={{display: 'flex', gap: '0.75rem', flexWrap: 'wrap'}}>
-                      <button className="btn ghost" onClick={() => abandon(q)}>
-                        Abandon
+                      <button
+                        className="btn ghost"
+                        disabled={loggedIn && pending === q.key}
+                        onClick={() => abandon(q)}
+                      >
+                        {loggedIn && pending === q.key ? 'Abandoning…' : 'Abandon'}
                       </button>
                       <button className="btn primary" onClick={() => setConfirming(null)} autoFocus>
                         Keep quest

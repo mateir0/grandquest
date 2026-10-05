@@ -93,7 +93,7 @@ export default function LoginPage() {
           disabled={busy}
           style={{width: '100%'}}
         >
-          Continue with Google →
+          {busy ? 'Opening Google…' : 'Continue with Google →'}
         </button>
         <p className="muted-note" style={{textAlign: 'center', margin: '0.75rem 0 0'}}>
           — or —

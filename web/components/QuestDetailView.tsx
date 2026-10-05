@@ -50,6 +50,7 @@ export function QuestDetailView({
   const [cleared, setCleared] = useState<string[]>([])
   const [gathered, setGathered] = useState<string[]>([])
   const [confirming, setConfirming] = useState(false)
+  const [abandoning, setAbandoning] = useState(false)
   useEffect(() => {
     if (!confirming) return
     const onKey = (e: KeyboardEvent) => {
@@ -90,7 +91,12 @@ export function QuestDetailView({
 
   const onAbandon = async () => {
     if (isLoggedIn) {
-      await abandonQuestServer(slug)
+      setAbandoning(true)
+      try {
+        await abandonQuestServer(slug)
+      } finally {
+        setAbandoning(false)
+      }
     } else {
       abandonQuest(quest._id)
     }
@@ -270,8 +276,8 @@ export function QuestDetailView({
             Abandon this quest? Your progress on it will be lost.
           </p>
           <div style={{display: 'flex', gap: '0.75rem', flexWrap: 'wrap'}}>
-            <button className="btn ghost" onClick={onAbandon}>
-              Abandon
+            <button className="btn ghost" onClick={onAbandon} disabled={abandoning}>
+              {abandoning ? 'Abandoning…' : 'Abandon'}
             </button>
             <button className="btn primary" onClick={() => setConfirming(false)} autoFocus>
               Keep quest

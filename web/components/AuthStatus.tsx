@@ -17,22 +17,26 @@ function QuietButton({
   onClick,
   children,
   autoFocus,
+  disabled,
 }: {
   onClick: () => void
   children: React.ReactNode
   autoFocus?: boolean
+  disabled?: boolean
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
       autoFocus={autoFocus}
+      disabled={disabled}
       style={{
         background: 'none',
         border: 0,
         padding: 0,
         minHeight: 0,
-        cursor: 'pointer',
+        cursor: disabled ? 'default' : 'pointer',
+        opacity: disabled ? 0.6 : 1,
         color: 'var(--muted)',
         fontFamily: 'var(--font-body)',
         fontSize: '0.85rem',
@@ -54,11 +58,11 @@ export function AuthStatus() {
   useEffect(() => {
     if (!confirming) return
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setConfirming(false)
+      if (e.key === 'Escape' && !busy) setConfirming(false)
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [confirming])
+  }, [confirming, busy])
 
   useEffect(() => {
     const supabase = createClient()
@@ -153,7 +157,7 @@ export function AuthStatus() {
           Delete your account? Your quest log, XP, and account will be
           permanently deleted. This cannot be undone.
         </span>
-        <QuietButton onClick={deleteEverything}>
+        <QuietButton onClick={deleteEverything} disabled={busy}>
           {busy ? 'Deleting…' : 'Delete everything'}
         </QuietButton>
         <QuietButton onClick={() => !busy && setConfirming(false)} autoFocus>
