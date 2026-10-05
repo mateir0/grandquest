@@ -30,6 +30,9 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: 'GrantQuest — Turn Scholarship Hunting into an RPG',
   description: siteDescription,
+  alternates: {
+    canonical: siteUrl,
+  },
   openGraph: {
     type: 'website',
     url: siteUrl,
@@ -127,6 +130,8 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
             <a href="/privacy">Privacy</a>
             {' · '}
             <a href="/terms">Terms</a>
+            {' · '}
+            A Hashir original.
           </p>
           <FooterSignature />
         </footer>

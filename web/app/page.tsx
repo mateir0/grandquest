@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   title: 'GrantQuest — Turn Scholarship Hunting into an RPG',
   description:
     'Browse real scholarships as quest-board missions with eligibility gates, document checklists, and live deadline countdowns. Free — no account needed to explore.',
+  alternates: {
+    canonical: 'https://grantquest.tech',
+  },
 }
 
 /**
@@ -167,8 +170,58 @@ async function PostedQuests() {
 }
 
 export default function BoardPage() {
+  const faqLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'What is GrantQuest?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'GrantQuest is a scholarship hunt presented as an RPG quest log. Each scholarship is a quest with eligibility gates to clear, documents to gather, and a deadline countdown to beat.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Is GrantQuest free?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Yes. Exploring the quest board and tracking quests is free, with no account needed. An account is only needed to sync your quest log across devices.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Do I need an account to use GrantQuest?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'No. Without an account your quest log stays in your browser. Signing in with a one-time email code or Google syncs your quest log and XP across devices.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'How reliable is the quest data?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Quest data is verified to our best effort and flagged when it needs re-verification. Always confirm deadlines and eligibility with the official source before applying.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'What happens to my data if I delete my account?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Deleting your account permanently removes your quest log, XP, and account. You can also delete your data by emailing hello@grantquest.tech.',
+        },
+      },
+    ],
+  }
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{__html: JSON.stringify(faqLd)}}
+      />
       <HomeHero />
       <HowItWorks />
       <section id="board" className="board-section">

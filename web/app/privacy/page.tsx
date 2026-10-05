@@ -4,6 +4,9 @@ import type {Metadata} from 'next'
 export const metadata: Metadata = {
   title: 'Privacy Policy — GrantQuest',
   description: 'What GrantQuest collects, why, and your rights over your data.',
+  alternates: {
+    canonical: 'https://grantquest.tech/privacy',
+  },
 }
 
 /** Plain-language privacy policy: only what the app actually does. */

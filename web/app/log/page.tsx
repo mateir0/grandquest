@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   title: 'Quest Log — GrantQuest',
   description:
     'Your adventurer’s record: every scholarship quest you started, its state, and your XP. Syncs across devices when you sign in.',
+  alternates: {
+    canonical: 'https://grantquest.tech/log',
+  },
 }
 
 /**

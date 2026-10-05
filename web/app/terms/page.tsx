@@ -4,6 +4,9 @@ import type {Metadata} from 'next'
 export const metadata: Metadata = {
   title: 'Terms of Service — GrantQuest',
   description: 'The plain-language rules for using GrantQuest.',
+  alternates: {
+    canonical: 'https://grantquest.tech/terms',
+  },
 }
 
 /** Plain-language terms: only what the app actually is and requires. */
