@@ -70,6 +70,14 @@ export const viewport: Viewport = {
 export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
     <html lang="en" className={`${imFellEnglish.variable} ${jetBrainsMono.variable}`}>
+      <head>
+        {/* Google AdSense verification / auto-ads */}
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3998567356276922"
+          crossOrigin="anonymous"
+        ></script>
+      </head>
       <body>
         {/* Preload the two display fonts (LCP text depends on them). These
             filenames are content-hashed by next/font — if they 404 after a
