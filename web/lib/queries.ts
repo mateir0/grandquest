@@ -47,7 +47,9 @@ export type QuestCardData = QuestDoc & {
   gates?: Gate[]
 }
 
-export type LogQuest = Pick<QuestDoc, '_id' | 'freshness'>
+export type LogQuest = Pick<QuestDoc, '_id' | 'freshness'> & {
+  slug?: {current: string}
+}
 
 /**
  * Board: published quests, soonest deadline first, with counts for the cards.
@@ -74,6 +76,7 @@ export const QUEST_DETAIL_QUERY = `*[_type == "quest" && slug.current == $slug][
 /** Minimal quest data used to decorate browser-owned quest-log entries. */
 export const LOG_QUESTS_QUERY = `*[_type == "quest"] {
   _id,
+  slug,
   ${FRESHNESS_PROJECTION}
 }`
 

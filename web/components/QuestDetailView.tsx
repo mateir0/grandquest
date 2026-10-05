@@ -7,6 +7,12 @@ import {Backpack, ScrollText, Star} from 'lucide-react'
 import type {QuestDetail} from '../lib/queries'
 import {deadlineLabel, deadlineTone, exactDeadline} from '../lib/deadline'
 import {getLog, startQuest, toggleDoc, toggleGate} from '../lib/questLog'
+import {
+  startQuestServer,
+  toggleDocServer,
+  toggleGateServer,
+  type ServerQuestEntry,
+} from '../lib/serverQuestLog'
 import {FreshnessBadge} from './FreshnessBadge'
 
 /** Flattens Sanity portable-text blocks into paragraphs. */
@@ -21,40 +27,79 @@ function briefingParagraphs(description?: unknown[]): string[] {
     .filter((text) => text.trim().length > 0)
 }
 
-export function QuestDetailView({quest}: {quest: QuestDetail}) {
+export function QuestDetailView({
+  quest,
+  serverEntry,
+  isLoggedIn,
+}: {
+  quest: QuestDetail
+  /** The server row for this quest (null when not started). Set when logged in. */
+  serverEntry?: ServerQuestEntry | null
+  /** When true, read/write ONLY the server log — localStorage is untouched. */
+  isLoggedIn?: boolean
+}) {
   const router = useRouter()
   const gates = quest.gates ?? []
   const documents = quest.documents ?? []
   const paragraphs = briefingParagraphs(quest.description)
   const tone = deadlineTone(quest.deadline)
+  const slug = quest.slug?.current ?? ''
 
   const [started, setStarted] = useState(false)
   const [cleared, setCleared] = useState<string[]>([])
   const [gathered, setGathered] = useState<string[]>([])
 
   // Read the quest log after mount — localStorage is not available during SSR.
+  // Logged-in users read ONLY the server entry supplied by the page.
   useEffect(() => {
+    if (isLoggedIn) {
+      if (!serverEntry) return
+      setStarted(true)
+      setCleared(serverEntry.clearedGates)
+      setGathered(serverEntry.gatheredDocs)
+      return
+    }
     const entry = getLog().quests.find((e) => e.questId === quest._id)
     if (!entry) return
     setStarted(true)
     setCleared(entry.clearedGates)
     setGathered(entry.gatheredDocs)
-  }, [quest._id])
+  }, [quest._id, isLoggedIn, serverEntry])
 
-  const onStart = () => {
-    startQuest(quest._id, quest.title, quest.slug?.current ?? '')
+  const onStart = async () => {
+    if (isLoggedIn) {
+      await startQuestServer(slug, quest.title)
+      setStarted(true)
+      router.push('/log')
+      return
+    }
+    startQuest(quest._id, quest.title, slug)
     setStarted(true)
     router.push('/log')
   }
 
-  const flipGate = (id: string) => {
-    toggleGate(quest._id, id, {questTitle: quest.title, slug: quest.slug?.current ?? ''})
+  const flipGate = async (id: string) => {
+    if (isLoggedIn) {
+      setStarted(true)
+      setCleared((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]))
+      await toggleGateServer(slug, quest.title, id)
+      window.dispatchEvent(new Event('grantquest:xp'))
+      return
+    }
+    toggleGate(quest._id, id, {questTitle: quest.title, slug})
     setStarted(true)
     setCleared((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]))
   }
 
-  const flipDoc = (id: string) => {
-    toggleDoc(quest._id, id, {questTitle: quest.title, slug: quest.slug?.current ?? ''})
+  const flipDoc = async (id: string) => {
+    if (isLoggedIn) {
+      setStarted(true)
+      setGathered((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]))
+      await toggleDocServer(slug, quest.title, id)
+      window.dispatchEvent(new Event('grantquest:xp'))
+      return
+    }
+    toggleDoc(quest._id, id, {questTitle: quest.title, slug})
     setStarted(true)
     setGathered((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]))
   }

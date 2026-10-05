@@ -3,6 +3,8 @@ import type {Metadata, Viewport} from 'next'
 import {Suspense} from 'react'
 import {IM_Fell_English, JetBrains_Mono} from 'next/font/google'
 import {XpBar} from '../components/XpBar'
+import {AuthStatus} from '../components/AuthStatus'
+import {MigrationRunner} from '../components/MigrationRunner'
 import {TourGuide} from '../components/TourGuide'
 import {FooterSignature} from '../components/FooterSignature'
 import {Analytics} from '@vercel/analytics/next'
@@ -82,6 +84,7 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
             </a>
           </nav>
           <XpBar />
+          <AuthStatus />
           <a className="btn primary topbar-cta" href="/#board">
             Begin expedition
           </a>
@@ -100,6 +103,7 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
         <Suspense fallback={null}>
           <TourGuide />
         </Suspense>
+        <MigrationRunner />
 
         <footer className="site-footer">
           <div className="divider">

@@ -10,14 +10,51 @@ import {
   NEXT_STATE,
   getXp,
   levelFor,
+  type QuestState,
 } from '../lib/questLog'
+import {
+  advanceQuestServer,
+  getServerLog,
+  rejectQuestServer,
+  type ServerLogData,
+} from '../lib/serverQuestLog'
 import {FreshnessBadge} from './FreshnessBadge'
 
-export function QuestLog({quests}: {quests: LogQuest[]}) {
+interface Row {
+  key: string
+  slug: string
+  title: string
+  state: QuestState
+  cleared: number
+  gathered: number
+  questId: string | null
+}
+
+export function QuestLog({
+  quests,
+  serverLog,
+}: {
+  quests: LogQuest[]
+  /** Present (even when empty) when logged in — server log is the only source. */
+  serverLog?: ServerLogData | null
+}) {
+  const loggedIn = !!serverLog
   const [tick, setTick] = useState(0)
   const [mounted, setMounted] = useState(false)
+  const [remote, setRemote] = useState<ServerLogData | null>(serverLog ?? null)
   useEffect(() => {
-    const on = () => setTick((t) => t + 1)
+    setRemote(serverLog ?? null)
+  }, [serverLog])
+
+  useEffect(() => {
+    const on = async () => {
+      // Server mutations fire no storage events — re-read the server log.
+      if (loggedIn) {
+        const fresh = await getServerLog()
+        if (fresh) setRemote(fresh)
+      }
+      setTick((t) => t + 1)
+    }
     setMounted(true)
     window.addEventListener('grantquest:xp', on)
     window.addEventListener('storage', on)
@@ -25,20 +62,52 @@ export function QuestLog({quests}: {quests: LogQuest[]}) {
       window.removeEventListener('grantquest:xp', on)
       window.removeEventListener('storage', on)
     }
-  }, [])
+  }, [loggedIn])
 
   // Re-read on every render (bumped by `tick`) — localStorage is client-only.
   // The fallback also keeps the server and first client render identical.
-  const log = mounted ? getLog() : {quests: [], xp: 0}
-  const xp = mounted ? getXp() : 0
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  void tick
+  let rows: Row[]
+  let xp: number
+  if (loggedIn) {
+    const list = remote?.quests ?? []
+    rows = list.map((q) => ({
+      key: q.questSlug,
+      slug: q.questSlug,
+      title: q.questTitle,
+      state: q.state,
+      cleared: q.clearedGates.length,
+      gathered: q.gatheredDocs.length,
+      questId: null,
+    }))
+    xp = remote?.xp ?? 0
+  } else {
+    const log = mounted ? getLog() : {quests: [], xp: 0}
+    rows = log.quests.map((q) => ({
+      key: q.questId,
+      slug: q.slug,
+      title: q.questTitle,
+      state: q.state,
+      cleared: q.clearedGates.length,
+      gathered: q.gatheredDocs.length,
+      questId: q.questId,
+    }))
+    xp = mounted ? getXp() : 0
+  }
   const level = levelFor(xp)
   const freshnessById = new Map(quests.map((quest) => [quest._id, quest.freshness]))
-  const inPlay = log.quests.filter((q) =>
+  const freshnessBySlug = new Map(
+    quests
+      .filter((quest) => quest.slug?.current)
+      .map((quest) => [quest.slug!.current, quest.freshness]),
+  )
+  const inPlay = rows.filter((q) =>
     ['discovered', 'clearing', 'gathering'].includes(q.state),
   ).length
-  const submitted = log.quests.filter((q) => q.state === 'submitted').length
+  const submitted = rows.filter((q) => q.state === 'submitted').length
 
-  if (log.quests.length === 0) {
+  if (rows.length === 0) {
     return (
       <div className="empty">
         <h2>No quests yet, adventurer. The board awaits →</h2>
@@ -67,20 +136,22 @@ export function QuestLog({quests}: {quests: LogQuest[]}) {
       </div>
 
       <div className="section">
-        {log.quests.map((q) => {
+        {rows.map((q) => {
           const next = NEXT_STATE[q.state]
           const terminal = q.state === 'awarded' || q.state === 'rejected'
-          const freshness = freshnessById.get(q.questId)
+          const freshness =
+            freshnessBySlug.get(q.slug) ??
+            (q.questId ? freshnessById.get(q.questId) : undefined)
           return (
-            <div key={q.questId} className="logcard">
+            <div key={q.key} className="logcard">
               <div className="row">
                 <div>
-                  <strong>{q.questTitle}</strong>
+                  <strong>{q.title}</strong>
                   <div className="state">STATE: {STATE_LABEL[q.state]}</div>
                   <div className="meta" style={{marginTop: '0.5rem'}}>
                     {freshness && <FreshnessBadge freshness={freshness} />}
-                    <span className="tag">Objectives: {q.clearedGates.length}</span>
-                    <span className="tag">Equipment: {q.gatheredDocs.length}</span>
+                    <span className="tag">Objectives: {q.cleared}</span>
+                    <span className="tag">Equipment: {q.gathered}</span>
                   </div>
                 </div>
                 <div style={{display: 'flex', gap: '0.75rem', flexWrap: 'wrap'}}>
@@ -90,9 +161,16 @@ export function QuestLog({quests}: {quests: LogQuest[]}) {
                   {next && (
                     <button
                       className="btn primary"
-                      onClick={() => {
-                        advanceQuest(q.questId)
-                        setTick((t) => t + 1)
+                      onClick={async () => {
+                        if (loggedIn) {
+                          await advanceQuestServer(q.slug)
+                          const fresh = await getServerLog()
+                          if (fresh) setRemote(fresh)
+                          window.dispatchEvent(new Event('grantquest:xp'))
+                        } else {
+                          if (q.questId) advanceQuest(q.questId)
+                          setTick((t) => t + 1)
+                        }
                       }}
                     >
                       Advance to {STATE_LABEL[next]}
@@ -101,9 +179,16 @@ export function QuestLog({quests}: {quests: LogQuest[]}) {
                   {!terminal && (
                     <button
                       className="btn ghost"
-                      onClick={() => {
-                        rejectQuest(q.questId)
-                        setTick((t) => t + 1)
+                      onClick={async () => {
+                        if (loggedIn) {
+                          await rejectQuestServer(q.slug)
+                          const fresh = await getServerLog()
+                          if (fresh) setRemote(fresh)
+                          window.dispatchEvent(new Event('grantquest:xp'))
+                        } else {
+                          if (q.questId) rejectQuest(q.questId)
+                          setTick((t) => t + 1)
+                        }
                       }}
                     >
                       Mark rejected

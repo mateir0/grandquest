@@ -1,10 +1,14 @@
 import {QuestLog} from '../../components/QuestLog'
 import {getLogQuests} from '../../lib/queries'
+import {getServerLog} from '../../lib/serverQuestLog'
 import {errorMessage, logError} from '../../lib/logger'
 
 export const dynamic = 'force-dynamic'
 
-/** Server shell supplies derived freshness; progress remains browser-owned. */
+/**
+ * Server shell supplies derived freshness; progress is browser-owned for
+ * anonymous visitors and server-owned (Supabase) for logged-in users.
+ */
 export default async function LogPage() {
   // The local quest log remains usable if Sanity is temporarily unavailable.
   const quests = await getLogQuests().catch((err: unknown) => {
@@ -12,5 +16,8 @@ export default async function LogPage() {
     return []
   })
 
-  return <QuestLog quests={quests} />
+  // Logged-out visitors get no server log — the client keeps localStorage.
+  const serverLog = await getServerLog().catch(() => null)
+
+  return <QuestLog quests={quests} serverLog={serverLog} />
 }
