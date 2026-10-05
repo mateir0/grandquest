@@ -56,6 +56,22 @@ export default function LoginPage() {
     }
   }
 
+  const continueWithGoogle = async () => {
+    setError('')
+    setBusy(true)
+    try {
+      const supabase = createClient()
+      const {error} = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {redirectTo: `${window.location.origin}/auth/callback`},
+      })
+      if (error) throw error
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Could not start Google sign-in.')
+      setBusy(false)
+    }
+  }
+
   return (
     <div style={{maxWidth: '26rem', margin: '0 auto'}}>
       <div className="board-head">
@@ -67,6 +83,21 @@ export default function LoginPage() {
             your quest log across devices.
           </p>
         </div>
+      </div>
+
+      <div className="logcard">
+        <button
+          className="btn primary"
+          type="button"
+          onClick={continueWithGoogle}
+          disabled={busy}
+          style={{width: '100%'}}
+        >
+          Continue with Google →
+        </button>
+        <p className="muted-note" style={{textAlign: 'center', margin: '0.75rem 0 0'}}>
+          — or —
+        </p>
       </div>
 
       <div className="logcard">
