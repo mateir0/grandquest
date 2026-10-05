@@ -6,8 +6,9 @@ import {useRouter} from 'next/navigation'
 import {Backpack, ScrollText, Star} from 'lucide-react'
 import type {QuestDetail} from '../lib/queries'
 import {deadlineLabel, deadlineTone, exactDeadline} from '../lib/deadline'
-import {getLog, startQuest, toggleDoc, toggleGate} from '../lib/questLog'
+import {getLog, abandonQuest, startQuest, toggleDoc, toggleGate} from '../lib/questLog'
 import {
+  abandonQuestServer,
   startQuestServer,
   toggleDocServer,
   toggleGateServer,
@@ -48,6 +49,7 @@ export function QuestDetailView({
   const [started, setStarted] = useState(false)
   const [cleared, setCleared] = useState<string[]>([])
   const [gathered, setGathered] = useState<string[]>([])
+  const [confirming, setConfirming] = useState(false)
 
   // Read the quest log after mount — localStorage is not available during SSR.
   // Logged-in users read ONLY the server entry supplied by the page.
@@ -76,6 +78,19 @@ export function QuestDetailView({
     startQuest(quest._id, quest.title, slug)
     setStarted(true)
     router.push('/log')
+  }
+
+  const onAbandon = async () => {
+    if (isLoggedIn) {
+      await abandonQuestServer(slug)
+    } else {
+      abandonQuest(quest._id)
+    }
+    setStarted(false)
+    setCleared([])
+    setGathered([])
+    setConfirming(false)
+    window.dispatchEvent(new Event('grantquest:xp'))
   }
 
   const flipGate = async (id: string) => {
@@ -220,7 +235,42 @@ export function QuestDetailView({
             Apply on provider site ↗
           </a>
         )}
+        {started && !confirming && (
+          <button
+            type="button"
+            onClick={() => setConfirming(true)}
+            style={{
+              background: 'none',
+              border: 0,
+              padding: 0,
+              minHeight: 0,
+              cursor: 'pointer',
+              alignSelf: 'center',
+              color: 'var(--muted)',
+              fontFamily: 'var(--font-body)',
+              fontSize: '0.85rem',
+              textDecoration: 'underline',
+            }}
+          >
+            Abandon quest
+          </button>
+        )}
       </div>
+      {started && confirming && (
+        <div style={{marginTop: '0.75rem'}}>
+          <p className="muted-note" style={{marginBottom: '0.5rem'}}>
+            Abandon this quest? Your progress on it will be lost.
+          </p>
+          <div style={{display: 'flex', gap: '0.75rem', flexWrap: 'wrap'}}>
+            <button className="btn ghost" onClick={onAbandon}>
+              Abandon
+            </button>
+            <button className="btn primary" onClick={() => setConfirming(false)}>
+              Keep quest
+            </button>
+          </div>
+        </div>
+      )}
     </>
   )
 }

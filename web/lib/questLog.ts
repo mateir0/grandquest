@@ -81,6 +81,23 @@ export function levelFor(xp: number): number {
   return Math.floor(xp / 100) + 1
 }
 
+/**
+ * The XP an entry currently represents: gate/doc bonuses plus the state
+ * bonus (submitted: +submitted; awarded: +submitted +awarded). Used when
+ * abandoning a quest so exactly the earned XP is deducted.
+ */
+export function xpForEntry(entry: {
+  state: QuestState
+  clearedGates: string[]
+  gatheredDocs: string[]
+}): number {
+  let xp = entry.clearedGates.length * XP.gateCleared
+  xp += entry.gatheredDocs.length * XP.documentGathered
+  if (entry.state === 'submitted') xp += XP.submitted
+  if (entry.state === 'awarded') xp += XP.submitted + XP.awarded
+  return xp
+}
+
 function addXp(data: LogData, n: number) {
   data.xp += n
 }
@@ -141,6 +158,16 @@ export function rejectQuest(questId: string) {
   if (!q) return
   if (q.state === 'awarded' || q.state === 'rejected') return
   q.state = 'rejected'
+  write(data)
+}
+
+/** Remove the entry and deduct exactly the XP it represents (floor 0). */
+export function abandonQuest(questId: string) {
+  const data = read()
+  const i = data.quests.findIndex((x) => x.questId === questId)
+  if (i < 0) return
+  const [removed] = data.quests.splice(i, 1)
+  data.xp = Math.max(0, data.xp - xpForEntry(removed))
   write(data)
 }
 

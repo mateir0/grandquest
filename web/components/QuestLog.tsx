@@ -4,6 +4,7 @@ import {useEffect, useState} from 'react'
 import type {LogQuest} from '../lib/queries'
 import {
   getLog,
+  abandonQuest,
   advanceQuest,
   rejectQuest,
   STATE_LABEL,
@@ -13,6 +14,7 @@ import {
   type QuestState,
 } from '../lib/questLog'
 import {
+  abandonQuestServer,
   advanceQuestServer,
   getServerLog,
   rejectQuestServer,
@@ -42,6 +44,7 @@ export function QuestLog({
   const [tick, setTick] = useState(0)
   const [mounted, setMounted] = useState(false)
   const [remote, setRemote] = useState<ServerLogData | null>(serverLog ?? null)
+  const [confirming, setConfirming] = useState<string | null>(null)
   useEffect(() => {
     setRemote(serverLog ?? null)
   }, [serverLog])
@@ -106,6 +109,19 @@ export function QuestLog({
     ['discovered', 'clearing', 'gathering'].includes(q.state),
   ).length
   const submitted = rows.filter((q) => q.state === 'submitted').length
+
+  const abandon = async (row: Row) => {
+    if (loggedIn) {
+      await abandonQuestServer(row.slug)
+      const fresh = await getServerLog()
+      if (fresh) setRemote(fresh)
+      window.dispatchEvent(new Event('grantquest:xp'))
+    } else {
+      if (row.questId) abandonQuest(row.questId)
+      setTick((t) => t + 1)
+    }
+    setConfirming(null)
+  }
 
   if (rows.length === 0) {
     return (
@@ -194,7 +210,40 @@ export function QuestLog({
                       Mark rejected
                     </button>
                   )}
+                  <button
+                    type="button"
+                    onClick={() => setConfirming(q.key)}
+                    style={{
+                      background: 'none',
+                      border: 0,
+                      padding: 0,
+                      minHeight: 0,
+                      cursor: 'pointer',
+                      alignSelf: 'center',
+                      color: 'var(--muted)',
+                      fontFamily: 'var(--font-body)',
+                      fontSize: '0.85rem',
+                      textDecoration: 'underline',
+                    }}
+                  >
+                    Abandon quest
+                  </button>
                 </div>
+                {confirming === q.key && (
+                  <div style={{marginTop: '0.75rem'}}>
+                    <p className="muted-note" style={{marginBottom: '0.5rem'}}>
+                      Abandon this quest? Your progress on it will be lost.
+                    </p>
+                    <div style={{display: 'flex', gap: '0.75rem', flexWrap: 'wrap'}}>
+                      <button className="btn ghost" onClick={() => abandon(q)}>
+                        Abandon
+                      </button>
+                      <button className="btn primary" onClick={() => setConfirming(null)}>
+                        Keep quest
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )

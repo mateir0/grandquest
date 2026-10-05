@@ -12,7 +12,7 @@
 
 import {revalidatePath} from 'next/cache'
 import {createClient} from './supabase/server'
-import {NEXT_STATE, XP, type QuestState} from './questLog'
+import {NEXT_STATE, XP, xpForEntry, type QuestState} from './questLog'
 
 export type {QuestState}
 
@@ -162,6 +162,52 @@ export async function rejectQuestServer(questSlug: string) {
     .update({state: 'rejected', updated_at: new Date().toISOString()})
     .eq('user_id', userId)
     .eq('quest_slug', questSlug)
+  revalidatePath('/log')
+}
+
+/**
+ * Abandon a quest: deletes the user's `quest_progress` row and deducts
+ * exactly the XP that quest's current state represents (same XP constants
+ * as the local log). `profiles.xp` never drops below 0.
+ */
+export async function abandonQuestServer(questSlug: string) {
+  const userId = await getUserId()
+  if (!userId || !questSlug) return
+  const supabase = createClient()
+  const {data} = await supabase
+    .from('quest_progress')
+    .select('state, cleared_gates, gathered_docs')
+    .eq('user_id', userId)
+    .eq('quest_slug', questSlug)
+    .single()
+  const row = data as {
+    state: QuestState
+    cleared_gates: string[] | null
+    gathered_docs: string[] | null
+  } | null
+  if (!row) return
+  const deduct = xpForEntry({
+    state: row.state,
+    clearedGates: row.cleared_gates ?? [],
+    gatheredDocs: row.gathered_docs ?? [],
+  })
+  await supabase
+    .from('quest_progress')
+    .delete()
+    .eq('user_id', userId)
+    .eq('quest_slug', questSlug)
+  if (deduct > 0) {
+    const {data: profile} = await supabase
+      .from('profiles')
+      .select('xp')
+      .eq('id', userId)
+      .single()
+    const current = (profile as {xp: number} | null)?.xp ?? 0
+    await supabase
+      .from('profiles')
+      .update({xp: Math.max(0, current - deduct)})
+      .eq('id', userId)
+  }
   revalidatePath('/log')
 }
 
