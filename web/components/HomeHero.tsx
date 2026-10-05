@@ -18,7 +18,7 @@ function CompassPanel() {
   return (
     <div className="hero-panel hero-panel-compass">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/grantquest-logo.webp" alt="The GrantQuest compass" width={260} height={260} />
+      <img src="/grantquest-logo.webp" alt="The GrantQuest compass" width={260} height={260} fetchPriority="high" />
       <p className="hero-panel-note">Every expedition begins with a bearing.</p>
     </div>
   )
