@@ -13,6 +13,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://grantquest.tech/log',
   },
+  openGraph: {
+    url: 'https://grantquest.tech/log',
+  },
 }
 
 /**

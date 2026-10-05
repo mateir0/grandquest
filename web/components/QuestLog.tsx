@@ -157,7 +157,7 @@ export function QuestLog({
         <div className="board-head" aria-busy="true" aria-label="Loading quest log">
           <div>
             <span className="eyebrow">Adventurer&apos;s record</span>
-            <div className="sk sk-title" style={{width: '12rem', height: '2.5rem'}} />
+            <h1>Quest Log</h1>
             <div className="sk sk-sub" style={{width: '18rem'}} />
           </div>
         </div>

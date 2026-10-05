@@ -157,6 +157,8 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
             {' · '}
             <a href="/terms">Terms</a>
             {' · '}
+            <a href="/login">Sign in</a>
+            {' · '}
             A Hashir original.
           </p>
           <FooterSignature />

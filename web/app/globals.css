@@ -259,6 +259,12 @@ img {
   margin: 0;
 }
 
+/* Board section title demoted to h2 (single-h1 rule) — visually identical. */
+.board-head .board-title {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  margin: 0;
+}
+
 .tagline {
   color: var(--muted);
   font-size: 1.05rem;

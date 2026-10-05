@@ -8,7 +8,7 @@ import {loadQuests} from '../lib/questStats'
 export const metadata: Metadata = {
   title: 'GrantQuest — Turn Scholarship Hunting into an RPG',
   description:
-    'Browse real scholarships as quest-board missions with eligibility gates, document checklists, and live deadline countdowns. Free — no account needed to explore.',
+    'Browse real scholarships as quest-board missions: eligibility gates, document checklists, and live deadline countdowns. Free to explore.',
   alternates: {
     canonical: 'https://grantquest.tech',
   },
@@ -27,7 +27,7 @@ function BoardHead({children}: {children?: React.ReactNode}) {
     <header className="board-head">
       <div>
         <span className="eyebrow">Welcome to GrantQuest</span>
-        <h1>GrantQuest</h1>
+        <h2 className="board-title">GrantQuest</h2>
         <p className="tagline">You have one quest. We make it count.</p>
       </div>
       {children}

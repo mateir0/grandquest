@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://grantquest.tech/privacy',
   },
+  openGraph: {
+    url: 'https://grantquest.tech/privacy',
+  },
 }
 
 /** Plain-language privacy policy: only what the app actually does. */

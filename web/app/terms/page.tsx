@@ -3,9 +3,13 @@ import type {Metadata} from 'next'
 
 export const metadata: Metadata = {
   title: 'Terms of Service — GrantQuest',
-  description: 'The plain-language rules for using GrantQuest.',
+  description:
+    'The plain-language rules for using GrantQuest: accounts, content honesty, acceptable use, and how to contact us.',
   alternates: {
     canonical: 'https://grantquest.tech/terms',
+  },
+  openGraph: {
+    url: 'https://grantquest.tech/terms',
   },
 }
 

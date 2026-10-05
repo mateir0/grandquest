@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://grantquest.tech/login',
   },
+  openGraph: {
+    url: 'https://grantquest.tech/login',
+  },
 }
 
 export default function LoginLayout({children}: {children: React.ReactNode}) {

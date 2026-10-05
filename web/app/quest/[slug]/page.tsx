@@ -6,7 +6,7 @@ import {QuestDetailView} from '../../../components/QuestDetailView'
 
 export const dynamic = 'force-dynamic'
 
-/** Title + description from the real quest — never invented copy. */
+/** Title + description from the real quest, truncated to SEO limits. */
 export async function generateMetadata({
   params,
 }: {
@@ -19,13 +19,24 @@ export async function generateMetadata({
       title: 'Quest not found — GrantQuest',
       description: 'No scholarship quest lives at this address.',
       alternates: {canonical},
+      openGraph: {url: canonical},
     }
   }
-  const reward = quest.amount ? ` worth ${quest.amount}` : ''
+  const suffix = ' — GrantQuest'
+  const name =
+    `${quest.title}${suffix}`.length > 60
+      ? `${quest.title.slice(0, 60 - suffix.length - 1)}…${suffix}`
+      : `${quest.title}${suffix}`
+  const full =
+    `Scholarship quest from ${quest.provider}` +
+    (quest.amount ? ` worth ${quest.amount}` : '') +
+    '. Clear the eligibility gates, gather the documents, and beat the deadline.'
+  const description = full.length > 155 ? `${full.slice(0, 154)}…` : full
   return {
-    title: `${quest.title} — GrantQuest`,
-    description: `Scholarship quest from ${quest.provider}${reward}. Clear the eligibility gates, gather the documents, and beat the deadline.`,
+    title: name,
+    description,
     alternates: {canonical},
+    openGraph: {url: canonical},
   }
 }
 
