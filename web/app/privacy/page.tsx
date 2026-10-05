@@ -75,10 +75,12 @@ export default function PrivacyPage() {
       <section className="section">
         <h2>Your rights</h2>
         <p>
-          You can see, correct, or delete your data at any time. Email{' '}
+          You can see, correct, or delete your data at any time. The fastest
+          way to delete everything is built in: sign in and choose
+          &ldquo;Delete my account&rdquo; in the header — your quest log, XP,
+          and account are permanently removed. Prefer email? Write to{' '}
           <a href="mailto:hello@grantquest.tech">hello@grantquest.tech</a> and
-          it gets done. Signing out on every device and asking for deletion
-          removes your account data from our database.
+          it gets done.
         </p>
       </section>
 
