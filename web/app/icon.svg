@@ -1,5 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="16" fill="#d4fb08"/>
-  <text x="50%" y="52%" dominant-baseline="central" text-anchor="middle"
-    font-family="Nunito, Arial, sans-serif" font-size="42" font-weight="800" fill="#1a1a1a">G</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#5c0000"/>
+  <rect x="28" y="28" width="456" height="456" fill="none" stroke="#b5a642" stroke-width="10"/>
+  <rect x="58" y="58" width="396" height="396" fill="none" stroke="#b5a642" stroke-width="3"/>
+  <text x="50%" y="55%" dominant-baseline="central" text-anchor="middle"
+    font-family="Georgia, 'Times New Roman', serif" font-size="290" font-weight="700" fill="#b5a642">G</text>
 </svg>

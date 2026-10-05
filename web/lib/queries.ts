@@ -82,6 +82,18 @@ export const LOG_QUESTS_QUERY = `*[_type == "quest"] {
 
 const NO_STORE = {cache: 'no-store' as const}
 
+/** Published quest slugs — feeds sitemap.xml. */
+export const QUEST_SLUGS_QUERY = `*[_type == "quest" && status == "published" && defined(slug.current)] {
+  "slug": slug.current
+}`
+
+export async function getQuestSlugs(): Promise<string[]> {
+  const rows = await client.fetch(QUEST_SLUGS_QUERY, {}, NO_STORE)
+  return ((rows ?? []) as {slug?: unknown}[])
+    .map((r) => r.slug)
+    .filter((s): s is string => typeof s === 'string' && s.length > 0)
+}
+
 export async function getQuests(): Promise<QuestCardData[]> {
   return client.fetch(QUESTS_QUERY, getFreshnessCutoffs(), NO_STORE)
 }

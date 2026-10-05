@@ -1,9 +1,16 @@
+import type {Metadata} from 'next'
 import {QuestLog} from '../../components/QuestLog'
 import {getLogQuests} from '../../lib/queries'
 import {getServerLog} from '../../lib/serverQuestLog'
 import {errorMessage, logError} from '../../lib/logger'
 
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  title: 'Quest Log — GrantQuest',
+  description:
+    'Your adventurer’s record: every scholarship quest you started, its state, and your XP. Syncs across devices when you sign in.',
+}
 
 /**
  * Server shell supplies derived freshness; progress is browser-owned for

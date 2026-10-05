@@ -1,8 +1,15 @@
 import {Suspense} from 'react'
+import type {Metadata} from 'next'
 import {Backpack, Compass, Hourglass, ScrollText} from 'lucide-react'
 import {QuestBoard} from '../components/QuestBoard'
 import {HomeHero} from '../components/HomeHero'
 import {loadQuests} from '../lib/questStats'
+
+export const metadata: Metadata = {
+  title: 'GrantQuest — Turn Scholarship Hunting into an RPG',
+  description:
+    'Browse real scholarships as quest-board missions with eligibility gates, document checklists, and live deadline countdowns. Free — no account needed to explore.',
+}
 
 /**
  * Rendered on the server at request time.

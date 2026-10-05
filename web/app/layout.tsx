@@ -24,30 +24,30 @@ const jetBrainsMono = JetBrains_Mono({
 
 const siteUrl = 'https://grantquest.tech'
 const siteDescription =
-  'Scholarships are quests. Clear the gates, gather the documents, beat the deadline.'
+  'GrantQuest turns scholarship hunting into an RPG quest log: browse real scholarships, clear the eligibility gates, gather your documents, and beat every deadline.'
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: 'GrantQuest — the scholarship hunt as a quest board',
+  title: 'GrantQuest — Turn Scholarship Hunting into an RPG',
   description: siteDescription,
   openGraph: {
     type: 'website',
     url: siteUrl,
     siteName: 'GrantQuest',
-    title: 'GrantQuest — the scholarship hunt as a quest board',
+    title: 'GrantQuest — Turn Scholarship Hunting into an RPG',
     description: siteDescription,
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'GrantQuest — brass compass-gear emblem on a deep maroon field',
+        alt: 'GrantQuest wordmark and brass compass emblem on parchment',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'GrantQuest — the scholarship hunt as a quest board',
+    title: 'GrantQuest — Turn Scholarship Hunting into an RPG',
     description: siteDescription,
     images: ['/og-image.png'],
   },
