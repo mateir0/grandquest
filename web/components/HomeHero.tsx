@@ -1,6 +1,9 @@
 import {Suspense} from 'react'
 import {ArrowRight, Cog, Hourglass} from 'lucide-react'
 import {loadQuests, summariseQuests} from '../lib/questStats'
+import {BriefingType} from './BriefingType'
+import {LedgerCount} from './LedgerCount'
+import {ShineButton} from './lightswind/shine-button'
 
 /** Large, faint gear silhouettes behind the hero — decoration only. */
 function HeroGears() {
@@ -37,11 +40,15 @@ async function StatsPanel() {
       <dl className="hero-stats">
         <div className="hero-stat">
           <dt>Open quests</dt>
-          <dd>{stats.questCount}</dd>
+          <dd>
+            <LedgerCount value={stats.questCount} />
+          </dd>
         </div>
         <div className="hero-stat">
           <dt>Countries covered</dt>
-          <dd>{stats.countryCount}</dd>
+          <dd>
+            <LedgerCount value={stats.countryCount} />
+          </dd>
         </div>
       </dl>
 
@@ -74,7 +81,9 @@ export function HomeHero() {
       <HeroGears />
 
       <div className="hero-copy">
-        <span className="hero-pill">Your scholarship search starts here</span>
+        <span className="hero-pill">
+          <BriefingType text="Your scholarship search starts here" />
+        </span>
 
         <h1 id="hero-title" className="hero-title">
           <span className="hero-title-a">The Great</span>
@@ -88,9 +97,7 @@ export function HomeHero() {
         </p>
 
         <div className="hero-actions">
-          <a className="btn mahogany" href="#board">
-            Start searching
-          </a>
+          <ShineButton href="#board">Start searching</ShineButton>
           <a className="btn tour-launch" href="/?tour=1">
             Take the 30-second tour
           </a>

@@ -1,6 +1,7 @@
 'use client'
 
 import {useEffect, useRef, useState} from 'react'
+import {SigShine} from './SigShine'
 
 /**
  * FooterSignature — the maker's sign-off, right-aligned under the footer.
@@ -37,10 +38,8 @@ export function FooterSignature() {
   }, [inView])
 
   return (
-    <div ref={ref} className={`footer-signature${inView ? ' in-view' : ''}`}>
-      <span className="sig-text" data-text="A Hashir original.">
-        A Hashir original.
-      </span>
+    <div ref={ref} className={`footer-signature sig-lw${inView ? ' in-view' : ''}`}>
+      <SigShine active={inView} />
       <svg
         className="sig-flourish"
         viewBox="0 0 180 18"

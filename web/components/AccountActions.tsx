@@ -10,6 +10,7 @@ import {useRouter} from 'next/navigation'
 import {createClient} from '../lib/supabase/client'
 import {deleteAccountServer} from '../lib/account'
 import {QuietButton} from './QuietButton'
+import {SlideConfirm} from './SlideConfirm'
 
 export function AccountActions() {
   const router = useRouter()
@@ -64,12 +65,15 @@ export function AccountActions() {
             Delete your account? Your quest log, XP, and account will be
             permanently deleted. This cannot be undone.
           </span>
-          <QuietButton onClick={deleteEverything} disabled={busy}>
-            {busy ? 'Deleting…' : 'Delete everything'}
-          </QuietButton>
-          <QuietButton onClick={() => !busy && setConfirming(false)} autoFocus>
-            Keep my account
-          </QuietButton>
+          <SlideConfirm
+            slideLabel="Slide to delete everything"
+            successLabel="Deleting…"
+            buttonLabel={busy ? 'Deleting…' : 'Delete everything'}
+            cancelLabel="Keep my account"
+            busy={busy}
+            onConfirm={deleteEverything}
+            onCancel={() => !busy && setConfirming(false)}
+          />
           {error && (
             <span className="muted-note" role="alert" style={{fontSize: '0.85rem'}}>
               {error}

@@ -10,6 +10,11 @@ import {useState} from 'react'
 import {useRouter} from 'next/navigation'
 import Link from 'next/link'
 import {createClient} from '../../lib/supabase/client'
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from '../../components/lightswind/input-otp'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -160,8 +165,8 @@ export default function LoginPage() {
               </button>
             </p>
             <div className="field">
-              <label
-                htmlFor="gq-code"
+              <span
+                id="gq-code-label"
                 style={{
                   marginBottom: '0.3rem',
                   fontFamily: 'var(--font-mono)',
@@ -172,17 +177,22 @@ export default function LoginPage() {
                 }}
               >
                 6-digit code
-              </label>
-              <input
+              </span>
+              <InputOTP
                 id="gq-code"
-                type="text"
-                inputMode="numeric"
-                autoComplete="one-time-code"
-                placeholder="123456"
+                maxLength={6}
                 value={code}
-                onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                required
-              />
+                onChange={(next) => setCode(next.replace(/\D/g, '').slice(0, 6))}
+                aria-labelledby="gq-code-label"
+                autoComplete="one-time-code"
+                containerClassName="gq-otp-wrap"
+              >
+                <InputOTPGroup className="gq-otp-group">
+                  {[0, 1, 2, 3, 4, 5].map((index) => (
+                    <InputOTPSlot key={index} index={index} className="gq-otp-slot" />
+                  ))}
+                </InputOTPGroup>
+              </InputOTP>
             </div>
             {error && (
               <p className="muted-note" role="alert" style={{marginTop: '0.75rem'}}>

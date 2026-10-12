@@ -15,6 +15,8 @@ import {
   type ServerQuestEntry,
 } from '../lib/serverQuestLog'
 import {FreshnessBadge} from './FreshnessBadge'
+import {ShineButton} from './lightswind/shine-button'
+import {SlideConfirm} from './SlideConfirm'
 
 /** Flattens Sanity portable-text blocks into paragraphs. */
 function briefingParagraphs(description?: unknown[]): string[] {
@@ -236,9 +238,7 @@ export function QuestDetailView({
 
       <div className="applybar">
         {!started ? (
-          <button className="btn primary" onClick={onStart}>
-            Start this quest
-          </button>
+          <ShineButton onClick={() => void onStart}>Start this quest</ShineButton>
         ) : (
           <button className="btn ghost" onClick={() => router.push('/log')}>
             View in quest log →
@@ -275,14 +275,15 @@ export function QuestDetailView({
           <p className="muted-note" style={{marginBottom: '0.5rem'}}>
             Leave this quest? Your progress on it will be lost.
           </p>
-          <div style={{display: 'flex', gap: '0.75rem', flexWrap: 'wrap'}}>
-            <button className="btn ghost" onClick={onAbandon} disabled={abandoning}>
-              {abandoning ? 'Leaving…' : 'Leave quest'}
-            </button>
-            <button className="btn primary" onClick={() => setConfirming(false)} autoFocus>
-              Keep quest
-            </button>
-          </div>
+          <SlideConfirm
+            slideLabel="Slide to leave quest"
+            successLabel="Left quest"
+            buttonLabel={abandoning ? 'Leaving…' : 'Leave quest'}
+            cancelLabel="Keep quest"
+            busy={abandoning}
+            onConfirm={onAbandon}
+            onCancel={() => setConfirming(false)}
+          />
         </div>
       )}
     </>

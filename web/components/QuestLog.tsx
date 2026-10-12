@@ -21,6 +21,10 @@ import {
   type ServerLogData,
 } from '../lib/serverQuestLog'
 import {FreshnessBadge} from './FreshnessBadge'
+import {Skeleton} from './lightswind/skeleton'
+import {SlideConfirm} from './SlideConfirm'
+import {Celebration} from './Celebration'
+import {ShineButton} from './lightswind/shine-button'
 
 interface Row {
   key: string
@@ -162,15 +166,15 @@ export function QuestLog({
           <div>
             <span className="eyebrow">Your profile</span>
             <h1>Quest Log</h1>
-            <div className="sk sk-sub" style={{width: '18rem'}} />
+            <Skeleton className="sk sk-sub" style={{width: '18rem'}} animation="none" />
           </div>
         </div>
         <div className="section" aria-hidden="true">
           {Array.from({length: 2}).map((_, i) => (
             <div className="logcard" key={i}>
-              <div className="sk sk-title" style={{width: '60%'}} />
-              <div className="sk sk-sub" style={{width: '30%'}} />
-              <div className="sk sk-meta" style={{width: '80%'}} />
+              <Skeleton className="sk sk-title" style={{width: '60%'}} animation="none" />
+              <Skeleton className="sk sk-sub" style={{width: '30%'}} animation="none" />
+              <Skeleton className="sk sk-meta" style={{width: '80%'}} animation="none" />
             </div>
           ))}
         </div>
@@ -186,12 +190,12 @@ export function QuestLog({
           Tick a requirement or add a document on any quest and it will appear
           here automatically — or start one deliberately and watch the XP roll in.
         </p>
-        <a className="btn primary" href="/#board">
-          Back to the board →
-        </a>
+        <ShineButton href="/#board">Back to the board →</ShineButton>
       </div>
     )
   }
+
+  const leveledUp = level > 1
 
   return (
     <>
@@ -203,6 +207,11 @@ export function QuestLog({
             {inPlay} quest{inPlay === 1 ? '' : 's'} in play · {submitted} submitted · Level{' '}
             {level} ({xp} XP)
           </p>
+          {leveledUp && (
+            <p style={{marginTop: '0.5rem'}}>
+              <Celebration eventId={`level:${level}`} label={`Level ${level} reached`} />
+            </p>
+          )}
         </div>
       </div>
 
@@ -219,6 +228,14 @@ export function QuestLog({
                 <div>
                   <strong>{q.title}</strong>
                   <div className="state">STATE: {STATE_LABEL[q.state]}</div>
+                  {q.state === 'awarded' && (
+                    <div style={{marginTop: '0.5rem'}}>
+                      <Celebration
+                        eventId={`awarded:${q.slug || q.key}`}
+                        label={`Celebrate ${q.title}`}
+                      />
+                    </div>
+                  )}
                   <div className="meta" style={{marginTop: '0.5rem'}}>
                     {freshness && <FreshnessBadge freshness={freshness} />}
                     <span className="tag">Objectives: {q.cleared}</span>
@@ -287,18 +304,17 @@ export function QuestLog({
                     <p className="muted-note" style={{marginBottom: '0.5rem'}}>
                       Leave this quest? Your progress on it will be lost.
                     </p>
-                    <div style={{display: 'flex', gap: '0.75rem', flexWrap: 'wrap'}}>
-                      <button
-                        className="btn ghost"
-                        disabled={loggedIn && pending === q.key}
-                        onClick={() => abandon(q)}
-                      >
-                        {loggedIn && pending === q.key ? 'Leaving…' : 'Leave quest'}
-                      </button>
-                      <button className="btn primary" onClick={() => setConfirming(null)} autoFocus>
-                        Keep quest
-                      </button>
-                    </div>
+                    <SlideConfirm
+                      slideLabel="Slide to leave quest"
+                      successLabel="Left quest"
+                      buttonLabel={
+                        loggedIn && pending === q.key ? 'Leaving…' : 'Leave quest'
+                      }
+                      cancelLabel="Keep quest"
+                      busy={loggedIn && pending === q.key}
+                      onConfirm={() => abandon(q)}
+                      onCancel={() => setConfirming(null)}
+                    />
                   </div>
                 )}
               </div>
@@ -331,30 +347,23 @@ export function QuestLog({
               <p className="muted-note" style={{marginBottom: '0.5rem'}}>
                 Delete your local quest log? This cannot be undone.
               </p>
-              <div style={{display: 'flex', gap: '0.75rem', flexWrap: 'wrap'}}>
-                <button
-                  className="btn ghost"
-                  onClick={() => {
-                    try {
-                      localStorage.removeItem('grantquest.log')
-                    } catch {
-                      /* ignore */
-                    }
-                    setWipeConfirm(false)
-                    window.dispatchEvent(new Event('grantquest:xp'))
-                    setTick((t) => t + 1)
-                  }}
-                >
-                  Delete everything
-                </button>
-                <button
-                  className="btn primary"
-                  onClick={() => setWipeConfirm(false)}
-                  autoFocus
-                >
-                  Keep my data
-                </button>
-              </div>
+              <SlideConfirm
+                slideLabel="Slide to delete everything"
+                successLabel="Deleted"
+                buttonLabel="Delete everything"
+                cancelLabel="Keep my data"
+                onConfirm={() => {
+                  try {
+                    localStorage.removeItem('grantquest.log')
+                  } catch {
+                    /* ignore */
+                  }
+                  setWipeConfirm(false)
+                  window.dispatchEvent(new Event('grantquest:xp'))
+                  setTick((t) => t + 1)
+                }}
+                onCancel={() => setWipeConfirm(false)}
+              />
             </div>
           )}
         </div>

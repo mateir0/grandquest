@@ -7,6 +7,7 @@ import {XpBar} from '../components/XpBar'
 import {AuthStatus} from '../components/AuthStatus'
 import {MigrationRunner} from '../components/MigrationRunner'
 import {FooterSignature} from '../components/FooterSignature'
+import {ShineButton} from '../components/lightswind/shine-button'
 import {Analytics} from '@vercel/analytics/next'
 
 // Interaction-gated (?tour=1) and client-only — split out of the initial
@@ -125,9 +126,9 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
           </nav>
           <XpBar />
           <AuthStatus />
-          <a className="btn primary topbar-cta" href="/#board">
+          <ShineButton href="/#board" className="topbar-cta">
             Begin expedition
-          </a>
+          </ShineButton>
         </header>
 
         <main className="container" id="main" tabIndex={-1}>

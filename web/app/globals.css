@@ -2034,3 +2034,294 @@ input[type="number"] {
   outline: 2px solid var(--mahogany);
   outline-offset: 2px;
 }
+
+/* ============================================================
+   Lightswind integrations — parchment/brass/maroon re-themes.
+   The project has no Tailwind: vendor utility classes are inert,
+   so every lightswind surface below is styled here in-theme.
+   All motion is transform/opacity-only; the global
+   prefers-reduced-motion rule plus JS fallbacks cover the rest.
+   ============================================================ */
+
+/* ---- shine-button: solid maroon plate, brass sweep on hover ---- */
+.gq-shine-btn {
+  position: relative;
+  overflow: hidden;
+  color: var(--parchment);
+  text-decoration: none;
+  box-shadow: 0 10px 22px -14px rgba(43, 34, 23, 0.95),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.gq-shine-btn:hover {
+  transform: translateY(-1px);
+  color: var(--parchment);
+  box-shadow: 0 14px 26px -14px rgba(43, 34, 23, 0.95),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.gq-shine-btn:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 2px;
+}
+
+.gq-shine-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.gq-shine-sweep {
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    100deg,
+    transparent,
+    rgba(255, 249, 224, 0.32),
+    transparent
+  );
+  transform: skewX(-20deg) translateX(0);
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.8s ease;
+  pointer-events: none;
+}
+
+.gq-shine-btn:hover .gq-shine-sweep,
+.gq-shine-btn:focus-visible .gq-shine-sweep {
+  opacity: 1;
+  transform: skewX(-20deg) translateX(350%);
+}
+
+/* ---- slide-to-confirm: parchment track, brass knob ---- */
+.gq-slide {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 999px;
+  border: 1.5px solid var(--brass);
+  background: var(--ivory);
+  box-shadow: var(--shadow);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y;
+  max-width: 100%;
+}
+
+.gq-slide-success {
+  cursor: pointer;
+  border-color: var(--brass-dark);
+}
+
+.gq-slide-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+.gq-slide-text,
+.gq-slide-success-text {
+  position: absolute;
+  z-index: 0;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.gq-slide-success-text {
+  color: var(--brass-dark);
+}
+
+.gq-slide-thumb {
+  position: absolute;
+  left: 4px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #f6e6ad, var(--brass) 62%, var(--brass-dark));
+  border: 1px solid var(--brass-dark);
+  color: var(--mahogany);
+  cursor: grab;
+  box-shadow: 0 4px 10px -4px rgba(43, 34, 23, 0.7);
+  touch-action: none;
+}
+
+.gq-slide-thumb:active {
+  cursor: grabbing;
+}
+
+.gq-slide-thumb-busy {
+  cursor: default;
+}
+
+.gq-slide-icon {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gq-slide-spinner {
+  height: 100%;
+  width: 100%;
+}
+
+.gq-slide-spokes {
+  position: relative;
+  height: 20px;
+  width: 20px;
+}
+
+.gq-slide-spoke {
+  position: absolute;
+  left: 9px;
+  top: 0;
+  height: 5.5px;
+  width: 1.8px;
+  border-radius: 999px;
+  background: var(--mahogany);
+}
+
+/* Keyboard fallback row under the slider. */
+.gq-slide-alt {
+  margin-top: 0.6rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+/* ---- count-up: inherit the ledger figure styling ---- */
+.gq-count {
+  display: inline-flex;
+  align-items: center;
+  font: inherit;
+  color: inherit;
+}
+
+/* ---- typing-text: inherit the briefing label styling ---- */
+.gq-typing {
+  display: inline-flex;
+  font: inherit;
+  letter-spacing: inherit;
+}
+
+/* ---- scroll-reveal card wrapper: grid-safe, fills the cell ---- */
+.gq-reveal {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.gq-reveal > article {
+  flex: 1;
+}
+
+/* ---- input-otp: parchment slots ---- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.gq-otp-group {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: nowrap;
+}
+
+.gq-otp-slot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 2.6rem;
+  height: 3.25rem;
+  font-size: 1.25rem;
+  color: var(--mahogany);
+  background: var(--ivory);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.gq-otp-slot[data-active="true"] {
+  border-color: var(--brass-dark);
+  box-shadow: 0 0 0 3px rgba(181, 166, 66, 0.28);
+}
+
+.lw-caret-blink {
+  animation: lw-caret-blink 1s ease-in-out infinite;
+}
+
+@keyframes lw-caret-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ---- confetti celebrate button: small brass pill ---- */
+.gq-celebrate {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 2.75rem;
+  padding: 0.4rem 0.9rem;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--mahogany);
+  background: rgba(181, 166, 66, 0.16);
+  border: 1.5px solid var(--brass);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.gq-celebrate:hover {
+  background: rgba(181, 166, 66, 0.28);
+}
+
+.gq-celebrate:focus-visible {
+  outline: 2px solid var(--brass-dark);
+  outline-offset: 2px;
+}
+
+.gq-celebrate:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* ---- shiny-text in the footer signature: swap the CSS glint for the
+   component sweep (once), keep the quill write + flourish untouched. ---- */
+.footer-signature.sig-lw .sig-text::after {
+  animation: none;
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gq-shine-sweep {
+    display: none;
+  }
+}
