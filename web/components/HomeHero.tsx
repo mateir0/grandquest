@@ -4,6 +4,7 @@ import {loadQuests, summariseQuests} from '../lib/questStats'
 import {BriefingType} from './BriefingType'
 import {LedgerCount} from './LedgerCount'
 import {ShineButton} from './lightswind/shine-button'
+import {LedgerStripes} from './LedgerStripes'
 
 /** Large, faint gear silhouettes behind the hero — decoration only. */
 function HeroGears() {
@@ -37,7 +38,8 @@ async function StatsPanel() {
     <div className="hero-panel">
       <span className="hero-panel-eyebrow">Search results</span>
 
-      <dl className="hero-stats">
+      <LedgerStripes>
+        <dl className="hero-stats">
         <div className="hero-stat">
           <dt>Open quests</dt>
           <dd>
@@ -66,6 +68,7 @@ async function StatsPanel() {
       <a className="btn primary hero-panel-cta" href="#board">
         View the board <ArrowRight size={16} aria-hidden="true" />
       </a>
+      </LedgerStripes>
     </div>
   )
 }

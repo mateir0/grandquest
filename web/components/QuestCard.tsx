@@ -93,13 +93,15 @@ export function QuestCard({quest, unlock}: {quest: QuestCardData; unlock?: Quest
           {truncated && (
             <>
               {' '}
-              <QuietButton
+              <button
+                type="button"
+                className="btn ghost read-more-btn"
                 onClick={() => setExpanded((v) => !v)}
                 aria-expanded={expanded}
                 aria-label={expanded ? 'Show less of the award details' : 'Read more of the award details'}
               >
                 {expanded ? 'Show less' : 'Read more'}
-              </QuietButton>
+              </button>
             </>
           )}
         </div>

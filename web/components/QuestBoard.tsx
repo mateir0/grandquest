@@ -13,6 +13,7 @@ import {
 } from '../lib/matching'
 import {QuestCard} from './QuestCard'
 import {Reveal} from './Reveal'
+import {BoardDotBackground} from './BoardDotBackground'
 import {AdventurerProfile, profileIsEmpty} from './AdventurerProfile'
 
 const LEVELS = [
@@ -210,13 +211,15 @@ export function QuestBoard({quests}: {quests: QuestCardData[]}) {
           </button>
         </div>
       ) : (
-        <div className="grid">
-          {visible.map((quest) => (
-            <Reveal key={quest._id}>
-              <QuestCard quest={quest} unlock={unlocks.get(quest._id)} />
-            </Reveal>
-          ))}
-        </div>
+        <BoardDotBackground>
+          <div className="grid">
+            {visible.map((quest) => (
+              <Reveal key={quest._id}>
+                <QuestCard quest={quest} unlock={unlocks.get(quest._id)} />
+              </Reveal>
+            ))}
+          </div>
+        </BoardDotBackground>
       )}
     </section>
   )

@@ -152,9 +152,10 @@ export function ScrollReveal({
       <motion.div
         ref={containerRef}
         className={cn(containerClassName)}
-        initial={{opacity: 0, y: 14}}
+        initial={{opacity: 1, y: 0}}
         animate={isInView ? {opacity: 1, y: 0} : undefined}
         transition={{duration: 0.45, ease: "easeOut"}}
+        style={{opacity: 1, transform: 'translateY(0)'}}
       >
         {children}
       </motion.div>
@@ -179,9 +180,8 @@ export function ScrollReveal({
           textClassName
         )}
         variants={containerVariants}
-        initial="hidden"
-        // Changed to `isInView` to match the behavior of triggering on view
-        animate={isInView ? "visible" : "hidden"}
+        initial="visible"
+        animate="visible"
       >
         {splitText.map((item) => ( // Map over 'item' directly as it's always an object
           item.isSpace ? (

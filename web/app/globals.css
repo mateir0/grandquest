@@ -451,8 +451,8 @@ select:focus {
   font-size: 0.68rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--parchment);
-  background: var(--mahogany);
+  color: #fff;
+  background: #000;
   border-radius: 2px;
   box-shadow: 0 5px 12px -7px rgba(43, 34, 23, 0.9);
 }
@@ -516,9 +516,9 @@ select:focus {
 }
 
 .freshness-badge.stale {
-  color: #8f1717;
-  background: rgba(143, 23, 23, 0.09);
-  border-color: rgba(143, 23, 23, 0.45);
+  color: #fff;
+  background: #000;
+  border-color: #1a0000;
 }
 
 .card-title {
@@ -537,6 +537,18 @@ select:focus {
   font-family: var(--font-body);
   font-size: 1.05rem;
   color: #0e7c7b;
+}
+
+.card-amount .read-more-btn {
+  color: #fff !important;
+  background: #000 !important;
+  border-color: transparent !important;
+  border-radius: 4px !important;
+  padding: 0.25rem 0.5rem !important;
+  font-size: 0.85rem !important;
+}
+.card-amount .read-more-btn:hover {
+  background: #111 !important;
 }
 
 .card-meta {
@@ -2323,5 +2335,179 @@ input[type="number"] {
 @media (prefers-reduced-motion: reduce) {
   .gq-shine-sweep {
     display: none;
+  }
+}
+
+/* ============================================================
+   New Lightswind integrations (world-map, scroll-timeline,
+   grid-dot-backgrounds, stripes-background) — parchment/brass.
+   ============================================================ */
+
+/* ---- world-map: Charted regions block ---- */
+.region-map {
+  margin: 3rem auto 2rem;
+  max-width: var(--maxw);
+  padding: 0 1.5rem;
+}
+
+.region-map-title {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--brass-dark);
+  margin-bottom: 1rem;
+}
+
+.region-map-svg {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--ivory);
+  box-shadow: var(--shadow);
+}
+
+.region-map-note {
+  margin-top: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* ---- scroll-timeline: quest lifecycle in How it works ---- */
+.timeline-static {
+  margin: 2rem auto 3rem;
+  max-width: 48rem;
+  padding: 0 1.5rem;
+}
+
+.timeline-static h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.timeline-steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  position: relative;
+}
+
+.timeline-steps::before {
+  content: '';
+  position: absolute;
+  left: 1.5rem;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, var(--brass), var(--copper));
+  opacity: 0.3;
+}
+
+.timeline-step {
+  display: flex;
+  gap: 1.25rem;
+  padding-left: 0.5rem;
+  position: relative;
+}
+
+.timeline-dot {
+  flex: none;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #f6e6ad, var(--brass) 60%, var(--brass-dark));
+  border: 2px solid var(--ivory);
+  box-shadow: 0 0 0 2px var(--brass);
+  margin-top: 0.25rem;
+  z-index: 1;
+}
+
+.timeline-content h3 {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  color: var(--mahogany);
+  margin: 0 0 0.35rem;
+}
+
+.timeline-content p {
+  margin: 0;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
+.timeline-scroll {
+  max-width: 48rem;
+  margin: 2rem auto 3rem;
+  padding: 0 1.5rem;
+}
+
+.timeline-scroll .motion-div {
+  /* The scroll-timeline component renders its own motion.divs */
+}
+
+/* ---- grid-dot-backgrounds: DotBackground behind quest board ---- */
+.board-dot-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.board-dot-bg > div:first-child {
+  opacity: 0.18;
+}
+
+/* ---- stripes-background: LedgerStripes behind stats row ---- */
+.ledger-stripes-wrapper {
+  position: relative;
+}
+
+.ledger-stripes {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background-image:
+    repeating-linear-gradient(45deg, #b5a642 0, #b5a642 1px, transparent 1px, transparent 12px);
+  opacity: 0.06;
+}
+
+.timeline-scroll .text-center > h2:empty {
+  display: none;
+}
+
+.hero-gears {
+  overflow: hidden;
+  max-width: 100%;
+  position: absolute;
+  inset: 0;
+}
+
+.timeline-scroll {
+  overflow-x: hidden;
+}
+
+/* Prevent shine sweep from causing horizontal scroll */
+.gq-shine-btn {
+  overflow: hidden;
+}
+.gq-shine-sweep {
+  left: -50%;
+  max-width: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gq-shine-sweep {
+    display: none;
+  }
+
+  /* Static fallbacks for new components */
+  .region-map-svg {
+    /* Map stays static anyway */
   }
 }

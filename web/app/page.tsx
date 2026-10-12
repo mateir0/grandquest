@@ -3,6 +3,8 @@ import type {Metadata} from 'next'
 import {Backpack, Compass, Hourglass, ScrollText} from 'lucide-react'
 import {QuestBoard} from '../components/QuestBoard'
 import {HomeHero} from '../components/HomeHero'
+import {RegionMap} from '../components/RegionMap'
+import {QuestTimeline} from '../components/QuestTimeline'
 import {loadQuests} from '../lib/questStats'
 
 export const metadata: Metadata = {
@@ -152,6 +154,7 @@ async function PostedQuests() {
           </div>
         )}
       </BoardHead>
+      {quests.length > 0 && <RegionMap quests={quests} />}
       {quests.length === 0 ? (
         <section className="board">
           <div className="board-empty">
@@ -222,7 +225,7 @@ export default function BoardPage() {
         dangerouslySetInnerHTML={{__html: JSON.stringify(faqLd)}}
       />
       <HomeHero />
-      <HowItWorks />
+      <QuestTimeline />
       <section id="board" className="board-section">
         <Suspense fallback={<BoardSkeleton />}>
           <PostedQuests />
