@@ -19,7 +19,7 @@ function CompassPanel() {
     <div className="hero-panel hero-panel-compass">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/grantquest-logo.webp" alt="The GrantQuest compass" width={260} height={260} fetchPriority="high" />
-      <p className="hero-panel-note">Every expedition begins with a bearing.</p>
+      <p className="hero-panel-note">Every search starts with a direction.</p>
     </div>
   )
 }
@@ -32,7 +32,7 @@ async function StatsPanel() {
 
   return (
     <div className="hero-panel">
-      <span className="hero-panel-eyebrow">Expedition ledger</span>
+      <span className="hero-panel-eyebrow">Search results</span>
 
       <dl className="hero-stats">
         <div className="hero-stat">
@@ -40,7 +40,7 @@ async function StatsPanel() {
           <dd>{stats.questCount}</dd>
         </div>
         <div className="hero-stat">
-          <dt>Regions charted</dt>
+          <dt>Countries covered</dt>
           <dd>{stats.countryCount}</dd>
         </div>
       </dl>
@@ -74,22 +74,22 @@ export function HomeHero() {
       <HeroGears />
 
       <div className="hero-copy">
-        <span className="hero-pill">Expedition briefing…</span>
+        <span className="hero-pill">Your scholarship search starts here</span>
 
         <h1 id="hero-title" className="hero-title">
           <span className="hero-title-a">The Great</span>
-          <span className="hero-title-b">Scholarship Expedition</span>
+          <span className="hero-title-b">Scholarship Search</span>
         </h1>
 
         <p className="hero-subtitle">
-          Every scholarship worth winning is an expedition: eligibility gates to clear, a
-          manifest of documents to gather, and a deadline that will not wait. GrantQuest
-          sets the whole hunt out as a quest board you can actually work.
+          Every scholarship is a quest: requirements to clear, documents to gather, and a
+          deadline that won't wait. GrantQuest lays it all out as a quest board you can
+          work through step by step.
         </p>
 
         <div className="hero-actions">
           <a className="btn mahogany" href="#board">
-            Begin expedition
+            Start searching
           </a>
           <a className="btn tour-launch" href="/?tour=1">
             Take the 30-second tour

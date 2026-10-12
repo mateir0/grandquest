@@ -76,7 +76,7 @@ export default function LoginPage() {
     <div style={{maxWidth: '26rem', margin: '0 auto'}}>
       <div className="board-head">
         <div>
-          <span className="eyebrow">Adventurer&apos;s gate</span>
+          <span className="eyebrow">Sign in to sync your progress</span>
           <h1>Sign in</h1>
           <p className="tagline">
             No password — we send a 6-digit code to your email. Signing in syncs

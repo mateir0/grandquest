@@ -160,7 +160,7 @@ export function QuestLog({
       <>
         <div className="board-head" aria-busy="true" aria-label="Loading quest log">
           <div>
-            <span className="eyebrow">Adventurer&apos;s record</span>
+            <span className="eyebrow">Your profile</span>
             <h1>Quest Log</h1>
             <div className="sk sk-sub" style={{width: '18rem'}} />
           </div>
@@ -181,9 +181,9 @@ export function QuestLog({
   if (rows.length === 0) {
     return (
       <div className="empty">
-        <h1>No quests yet, adventurer. The board awaits →</h1>
+        <h1>No quests yet — the board is waiting →</h1>
         <p>
-          Tick a gate or gather a document on any quest and it will be entered
+          Tick a requirement or add a document on any quest and it will appear
           here automatically — or start one deliberately and watch the XP roll in.
         </p>
         <a className="btn primary" href="/#board">
@@ -197,7 +197,7 @@ export function QuestLog({
     <>
       <div className="board-head">
         <div>
-          <span className="eyebrow">Adventurer&apos;s record</span>
+          <span className="eyebrow">Your profile</span>
           <h1>Quest Log</h1>
           <p>
             {inPlay} quest{inPlay === 1 ? '' : 's'} in play · {submitted} submitted · Level{' '}
@@ -244,7 +244,7 @@ export function QuestLog({
                     >
                       {loggedIn && pending === q.key
                         ? 'Advancing…'
-                        : `Advance to ${STATE_LABEL[next]}`}
+                        : `Move to ${STATE_LABEL[next]}`}
                     </button>
                   )}
                   {!terminal && (
@@ -260,7 +260,7 @@ export function QuestLog({
                         }
                       }}
                     >
-                      {loggedIn && pending === q.key ? 'Rejecting…' : 'Mark rejected'}
+                      {loggedIn && pending === q.key ? 'Rejecting…' : 'Mark as rejected'}
                     </button>
                   )}
                   <button
@@ -279,13 +279,13 @@ export function QuestLog({
                       textDecoration: 'underline',
                     }}
                   >
-                    Abandon quest
+                    Leave quest
                   </button>
                 </div>
                 {confirming === q.key && (
                   <div style={{marginTop: '0.75rem'}}>
                     <p className="muted-note" style={{marginBottom: '0.5rem'}}>
-                      Abandon this quest? Your progress on it will be lost.
+                      Leave this quest? Your progress on it will be lost.
                     </p>
                     <div style={{display: 'flex', gap: '0.75rem', flexWrap: 'wrap'}}>
                       <button
@@ -293,7 +293,7 @@ export function QuestLog({
                         disabled={loggedIn && pending === q.key}
                         onClick={() => abandon(q)}
                       >
-                        {loggedIn && pending === q.key ? 'Abandoning…' : 'Abandon'}
+                        {loggedIn && pending === q.key ? 'Leaving…' : 'Leave quest'}
                       </button>
                       <button className="btn primary" onClick={() => setConfirming(null)} autoFocus>
                         Keep quest

@@ -149,7 +149,7 @@ async function RelatedQuestsSection({quest, slug}: {quest: QuestDetail; slug: st
   return (
     <section className="related-quests" aria-labelledby="related-quests-heading" style={{marginTop: '3rem', paddingTop: '2rem', borderTop: '1px solid var(--border)'}}>
       <h2 id="related-quests-heading" style={{fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--fg)'}}>
-        Related quests
+        More scholarships like this
       </h2>
       <ul style={{display: 'flex', flexDirection: 'column', gap: '0.5rem', listStyle: 'none', padding: 0}}>
         {related.map((r) => (
@@ -200,14 +200,14 @@ function QuestSummary({quest}: {quest: QuestDetail}) {
     (quest.countries?.length ? ` Listed for ${quest.countries.join(', ')}.` : '')
   return (
     <section className="briefing" aria-label="Quest summary">
-      <strong>Summary</strong>
+      <strong>Quick summary</strong>
       <div className="briefing-content">
         <p>{what}</p>
         <p>
           {scope}
           {closes ? ` ${closes} for applications.` : ''}
           {quest.freshness === 'stale'
-            ? ' This listing is flagged as needing re-verification — confirm details with the official source before applying.'
+            ? ' This listing may be outdated — confirm details with the official source before applying.'
             : ''}
         </p>
       </div>

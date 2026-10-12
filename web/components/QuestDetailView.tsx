@@ -164,7 +164,7 @@ export function QuestDetailView({
 
       {paragraphs.length > 0 && (
         <section className="briefing">
-          <strong>Mission brief</strong>
+          <strong>About this scholarship</strong>
           <div className="briefing-content">
             {paragraphs.map((text, i) => (
               <p key={i}>{text}</p>
@@ -175,11 +175,11 @@ export function QuestDetailView({
 
       <section className="section">
         <h2>
-          <ScrollText size={20} aria-hidden="true" /> Objectives — {cleared.length}/
+          <ScrollText size={20} aria-hidden="true" /> Eligibility gates — {cleared.length}/
           {gates.length} cleared
         </h2>
         {gates.length === 0 ? (
-          <p className="muted-note">No gates recorded for this quest yet — check back soon.</p>
+          <p className="muted-note">No eligibility gates recorded for this quest yet — check back soon.</p>
         ) : (
           gates.map((gate) => (
             <label
@@ -207,7 +207,7 @@ export function QuestDetailView({
 
       <section className="section">
         <h2>
-          <Backpack size={20} aria-hidden="true" /> Inventory — {gathered.length}/
+          <Backpack size={20} aria-hidden="true" /> Documents — {gathered.length}/
           {documents.length} gathered
         </h2>
         {documents.length === 0 ? (
@@ -266,18 +266,18 @@ export function QuestDetailView({
               textDecoration: 'underline',
             }}
           >
-            Abandon quest
+            Leave this quest
           </button>
         )}
       </div>
       {started && confirming && (
         <div style={{marginTop: '0.75rem'}}>
           <p className="muted-note" style={{marginBottom: '0.5rem'}}>
-            Abandon this quest? Your progress on it will be lost.
+            Leave this quest? Your progress on it will be lost.
           </p>
           <div style={{display: 'flex', gap: '0.75rem', flexWrap: 'wrap'}}>
             <button className="btn ghost" onClick={onAbandon} disabled={abandoning}>
-              {abandoning ? 'Abandoning…' : 'Abandon'}
+              {abandoning ? 'Leaving…' : 'Leave quest'}
             </button>
             <button className="btn primary" onClick={() => setConfirming(false)} autoFocus>
               Keep quest

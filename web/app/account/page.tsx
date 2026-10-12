@@ -20,9 +20,9 @@ export const metadata: Metadata = {
 }
 
 const TIPS = [
-  'Clearing an eligibility gate earns 10 XP, and gathering a document earns 15 XP.',
+  'Clearing a requirement earns 10 XP, and adding a document earns 15 XP.',
   'Submitting a quest earns 50 XP, and an awarded quest earns 200 more.',
-  'Abandon quests you no longer pursue — the quest leaves your log and exactly the XP it earned is deducted.',
+  'Leave quests you no longer pursue — the quest leaves your log and the XP it earned is deducted.',
   'A quest flagged as needing re-verification means confirm the deadline and eligibility with the official source before applying.',
 ]
 
@@ -45,8 +45,8 @@ export default async function AccountPage() {
     <div style={{maxWidth: '40rem', margin: '0 auto'}}>
       <div className="board-head">
         <div>
-          <span className="eyebrow">Adventurer&apos;s record</span>
-          <h1>Adventurer&apos;s Record</h1>
+          <span className="eyebrow">Your profile</span>
+          <h1>Your Profile</h1>
         </div>
       </div>
 
@@ -63,7 +63,7 @@ export default async function AccountPage() {
       </section>
 
       <section className="section" aria-label="Tips">
-        <h2>Field tips</h2>
+        <h2>Tips</h2>
         <ul style={{margin: 0, paddingLeft: '1.25rem', color: 'var(--muted)'}}>
           {TIPS.map((tip) => (
             <li key={tip} style={{marginBottom: '0.5rem'}}>
@@ -74,13 +74,13 @@ export default async function AccountPage() {
       </section>
 
       <section className="section" aria-label="Current log">
-        <h2>Current log</h2>
+        <h2>Your quests</h2>
         {quests.length === 0 ? (
           <div className="empty">
-            <h2>No quests in play yet — the board awaits →</h2>
+            <h2>No quests yet — the board is waiting →</h2>
             <p>
-              Tick a gate or gather a document on any quest and it will be
-              entered here automatically.
+              Tick a requirement or add a document on any quest and it will appear
+              here automatically.
             </p>
             <a className="btn primary" href="/#board">
               Back to the board →
@@ -92,7 +92,7 @@ export default async function AccountPage() {
               <div className="row">
                 <div>
                   <strong>{q.questTitle}</strong>
-                  <div className="state">STATE: {STATE_LABEL[q.state]}</div>
+                  <div className="state">{STATE_LABEL[q.state]}</div>
                 </div>
                 <a className="btn ghost" href={`/quest/${q.questSlug}`}>
                   Review quest

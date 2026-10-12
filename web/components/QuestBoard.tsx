@@ -121,10 +121,10 @@ export function QuestBoard({quests}: {quests: QuestCardData[]}) {
           <Sparkles size={17} aria-hidden="true" />
           <span>
             <strong>{unlockedCount}</strong> of {quests.length} quest
-            {quests.length === 1 ? '' : 's'} unlock for your profile
+            {quests.length === 1 ? '' : 's'} match your profile
           </span>
           <span className="unlocked-banner-hint">
-            Verdicts are stamped on every card below.
+            Matching quests are marked on every card below.
           </span>
         </div>
       )}
@@ -178,11 +178,11 @@ export function QuestBoard({quests}: {quests: QuestCardData[]}) {
           aria-pressed={unlockedOnly}
           title={
             profile
-              ? 'Show only quests whose gates your profile already clears'
-              : 'Set your adventurer profile to filter by unlock'
+              ? 'Show only quests whose requirements your profile already meets'
+              : 'Set your profile to filter by match'
           }
         >
-          <LockOpen size={15} aria-hidden="true" /> Unlocked only
+          <LockOpen size={15} aria-hidden="true" /> Matching only
         </button>
 
         {filtersActive && (
@@ -198,10 +198,10 @@ export function QuestBoard({quests}: {quests: QuestCardData[]}) {
 
       {visible.length === 0 ? (
         <div className="board-empty">
-          <h2>No quests answer that call</h2>
+          <h2>No quests match your filters</h2>
           <p>
             {profile
-              ? 'Nothing on the board matches this combination of unlock, study path, region and search. Widen your profile — or clear the filters and browse the full board.'
+              ? 'Nothing on the board matches this combination of match, study path, region and search. Widen your profile — or clear the filters and browse the full board.'
               : 'Nothing on the board matches this combination of study path, region and search. Loosen a filter — or clear them all and browse the full board.'}
           </p>
           <button type="button" className="btn primary" onClick={clear} style={{marginTop: '1.5rem'}}>

@@ -146,9 +146,9 @@ export function QuestCard({quest, unlock}: {quest: QuestCardData; unlock?: Quest
         className="card-cta"
         href={href}
         style={{textDecoration: 'none'}}
-        aria-label={`Enter quest: ${quest.title}`}
+        aria-label={`Open quest: ${quest.title}`}
       >
-        Enter quest <span aria-hidden="true">→</span>
+        Open quest <span aria-hidden="true">→</span>
       </Link>
     </article>
   )

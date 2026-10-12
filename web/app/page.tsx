@@ -28,7 +28,7 @@ function BoardHead({children}: {children?: React.ReactNode}) {
       <div>
         <span className="eyebrow">Welcome to GrantQuest</span>
         <h2 className="board-title">GrantQuest</h2>
-        <p className="tagline">You have one quest. We make it count.</p>
+        <p className="tagline">One quest at a time. We help you make it count.</p>
       </div>
       {children}
     </header>
@@ -84,18 +84,18 @@ function BoardSkeleton() {
 const HOW_STEPS = [
   {
     icon: Compass,
-    title: 'Chart the quest',
+    title: 'Find your scholarships',
     body: 'Browse the board for scholarships that fit your study path and region.',
   },
   {
     icon: ScrollText,
     title: 'Clear the gates',
-    body: 'Each quest lists its eligibility gates. Tick them off as you prove you qualify.',
+    body: 'Each quest lists its eligibility gates — the requirements you must clear. Tick them off as you prove you qualify.',
   },
   {
     icon: Backpack,
     title: 'Gather the documents',
-    body: 'Work the inventory: transcripts, passports, references, motivation letters.',
+    body: 'Work the checklist: transcripts, passports, references, motivation letters.',
   },
   {
     icon: Hourglass,
@@ -107,7 +107,7 @@ const HOW_STEPS = [
 function HowItWorks() {
   return (
     <section className="how" id="how" aria-labelledby="how-title">
-      <h2 id="how-title">How an expedition runs</h2>
+      <h2 id="how-title">How it works</h2>
       <ol className="how-steps">
         {HOW_STEPS.map(({icon: Icon, title, body}) => (
           <li className="how-step" key={title}>
@@ -134,7 +134,7 @@ async function PostedQuests() {
           <div className="board-empty">
             <h2>Connection lost</h2>
             <p>
-              We couldn't reach the quest board. Check your connection and try again.
+              We couldn't reach the quest board. Check your internet and try again.
             </p>
           </div>
         </section>
@@ -155,10 +155,9 @@ async function PostedQuests() {
       {quests.length === 0 ? (
         <section className="board">
           <div className="board-empty">
-            <h2>No active quests</h2>
+            <h2>No active quests right now</h2>
             <p>
-              The quest board is waiting for new missions. Check back soon for
-              opportunities to make your mark.
+              The quest board is waiting for new scholarships. Check back soon.
             </p>
           </div>
         </section>
@@ -179,7 +178,7 @@ export default function BoardPage() {
         name: 'What is GrantQuest?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'GrantQuest is a scholarship hunt presented as an RPG quest log. Each scholarship is a quest with eligibility gates to clear, documents to gather, and a deadline countdown to beat.',
+          text: 'GrantQuest turns scholarship hunting into a quest log. Each scholarship is a quest with eligibility gates (requirements) to clear, documents to gather, and a deadline countdown to beat.',
         },
       },
       {

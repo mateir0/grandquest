@@ -115,10 +115,10 @@ export function AdventurerProfile({initial, hydrated, onChange}: Props) {
           <IdCard size={22} />
         </span>
         <div className="adventurer-intro">
-          <h2 id="adventurer-title">Create adventurer profile</h2>
+          <h2 id="adventurer-title">Create your profile</h2>
           <p>
-            Say who you are and the board lights up every quest whose gates you already
-            clear. Kept in this browser — nothing is sent anywhere.
+            Tell us who you are and the board will highlight every quest whose
+            requirements you already meet. Stored in this browser only — nothing is sent anywhere.
           </p>
         </div>
         {hasAny && (
@@ -201,7 +201,7 @@ export function AdventurerProfile({initial, hydrated, onChange}: Props) {
       </div>
 
       <p className="adventurer-note">
-        <Compass size={13} aria-hidden="true" /> Gates the engine can&apos;t verify — like
+        <Compass size={13} aria-hidden="true" /> Requirements the engine can&apos;t verify — like
         a citizenship list or a language test — stay open on the card and only ask you to
         prove them.
       </p>
