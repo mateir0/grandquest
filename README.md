@@ -13,7 +13,7 @@ Built for the DEV Sanity Challenge (Path Two).
 
 ## What it does
 
-- **Quest board** — all 25 scholarships with live eligibility verdicts against your profile.
+- **Quest board** — all 73 scholarships with live eligibility verdicts against your profile.
 - **Quest detail** — briefing, eligibility gates as structured data (not prose), document checklist, deadline countdown.
 - **Quest log + XP** — track applications, earn XP per action, level up. Saved locally.
 - **Eligibility engine** — profile-vs-gates matching, client-side and transparent.
@@ -24,7 +24,7 @@ Built for the DEV Sanity Challenge (Path Two).
 
 ## The data
 
-25 real scholarships. Nothing invented — no guessed deadlines, amounts, or requirements. (Fulbright, DAAD, Gates Cambridge, Clarendon, Knight-Hennessy, Schwarzman, Chevening, Eiffel, ETH Zurich, Rhodes ×4, GKS-U ×4, and more.)
+73 real scholarships. Nothing invented — no guessed deadlines, amounts, or requirements. (Fulbright, DAAD, Gates Cambridge, Clarendon, Knight-Hennessy, Schwarzman, Chevening, Eiffel, ETH Zurich, Rhodes ×4, GKS-U ×4, and more.)
 
 ## Repo layout
 studio/ # Sanity Studio — schemas, verification workflow, deadline sweeper
